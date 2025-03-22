@@ -4,82 +4,77 @@
 
 @section('content')
 <div class="container">
-    <h3>Welcome to Dashboard Settings, {{ $restaurant->restaurantName }}</h3>
+    <h3>Welcome to Dashboard Settings</h3>
 
-    <form id="settings_form" action="{{ route('restaurant.update', $restaurant->id) }}" method="POST" enctype="multipart/form-data">
+
+    <form id="create_restaurant_form" action="{{ route('restaurantCreation') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
 
         <div class="input-group">
             <label for="name">Restaurant Name</label>
-            <input type="text" name="name" id="name" placeholder="Restaurant Name"
-                value="{{ old('name', $restaurant->restaurantName) }}" required>
+            <input type="text" name="name" id="name" placeholder="Restaurant Name" required>
         </div>
 
         <div class="input-group">
             <label for="number">Restaurant Phone Number</label>
-            <input type="text" name="number" id="number" placeholder="Phone Number"
-                value="{{ old('number', $restaurant->restaurantPhoneNumber) }}" required>
+            <input type="text" name="number" id="number" placeholder="Phone Number" required>
         </div>
 
         <div class="input-group">
             <label for="city">Restaurant City</label>
-            <input type="text" name="city" id="city" placeholder="City"
-                value="{{ old('city', $restaurant->restaurantCity) }}" required>
+            <input type="text" name="city" id="city" placeholder="City" required>
         </div>
 
         <div class="input-group">
             <label for="address">Restaurant Address</label>
-            <input type="text" name="address" id="address" placeholder="Address"
-                value="{{ old('address', $restaurant->restaurantAddress) }}" required>
+            <input type="text" name="address" id="address" placeholder="Address" required>
         </div>
 
         <div class="input-group">
             <label for="desc">Restaurant Description</label>
-            <textarea name="desc" id="desc" placeholder="Description" required>{{ old('desc', $restaurant->restaurantDescription) }}</textarea>
+            <textarea name="desc" id="desc" placeholder="Description" required></textarea>
         </div>
+
 
         <div class="input-group" style="display: grid;">
             <label for="style">Restaurant Category</label>
             <select name="style" id="style" required>
-                <option value="Asian" {{ $restaurant->restaurantStyle == 'Asian' ? 'selected' : '' }}>Asian</option>
-                <option value="Western" {{ $restaurant->restaurantStyle == 'Western' ? 'selected' : '' }}>Western</option>
-                <option value="Fine Dining" {{ $restaurant->restaurantStyle == 'Fine Dining' ? 'selected' : '' }}>Fine Dining</option>
-                <option value="Bar" {{ $restaurant->restaurantStyle == 'Bar' ? 'selected' : '' }}>Bar</option>
+                <option value="Asian">Asian</option>
+                <option value="Western">Western</option>
+                <option value="Fine Dining">Fine Dining</option>
+                <option value="Bar">Bar</option>
             </select>
         </div>
 
         <div class="input-group" style="display: grid; gap:20px">
             <label>Restaurant Operating Hours</label>
             <div id="schedule-container">
-                @foreach ($schedules as $index => $schedule)
                 <div class="schedule-row">
-                    <select name="days[]" class="days-dropdown">
-                        @php $selectedDay = $schedule['day']; @endphp
-                        @foreach (["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as $day)
-                        <option value="{{ $day }}" {{ $selectedDay == $day ? 'selected' : '' }}>{{ $day }}</option>
-                        @endforeach
+                    <select name="days[]" class="days-dropdown" onchange="updateDaySelection()">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
                     </select>
-                    <input type="time" name="open_time[]" class="open-time" value="{{ $schedule['open_time'] }}" required>
+                    <input type="time" name="open_time[]" class="open-time" required>
                     <span>to</span>
-                    <input type="time" name="close_time[]" class="close-time" value="{{ $schedule['close_time'] }}" required>
+                    <input type="time" name="close_time[]" class="close-time" required>
                     <button type="button" class="remove-schedule">✖</button>
                 </div>
-                @endforeach
             </div>
-            <button type="button" id="add-schedule" style="width: min-content; background:transparent; color:#4286f5; text-decoration:underline; white-space:nowrap">Add</button>
+            <button type="button" style="width: min-content;background:transparent;color:#4286f5;text-decoration:underline; white-space:nowrap" id="add-schedule">Add </button>
+
         </div>
 
-
-
-
-
-        <div class="input-group" style=" display: grid;">
+        <div class="input-group" style=" display: grid; height: min-content;">
             <label for="image">Update Images (Min 3)</label>
 
             <div id="imagePreviewContainer" style="display: flex; gap: 10px; margin-top: 10px;">
                 @php
-                $images = explode(',', $restaurant->restaurantImage);
+                $images = explode(',', '');
                 $images = array_map('trim', $images);
                 $maxSlots = 3; // Ensure 3 slots exist
 
@@ -107,29 +102,20 @@
             </div>
 
             <small id="imageError" style="color: red; display: none;">Please upload at least 3 images.</small>
+            <button style="margin-top:20p" type="submit">Create Restaurant</button>
+
         </div>
 
 
-        <button type="submit">Update Restaurant</button>
+
+        <div></div>
     </form>
+
+
+
+
 </div>
 
-<script>
-    function triggerFileInput(index) {
-        document.querySelector(`input.image-input[data-index="${index}"]`).click();
-    }
-
-    function replaceImage(event, index) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.querySelector(`.preview-image[data-index="${index}"]`).src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-</script>
 <script>
     document.getElementById("add-schedule").addEventListener("click", function() {
         const container = document.getElementById("schedule-container");
@@ -205,6 +191,25 @@
     // Add validation for the default row
     addTimeValidation(document.querySelector(".schedule-row"));
 </script>
+
+
+<script>
+    function triggerFileInput(index) {
+        document.querySelector(`input.image-input[data-index="${index}"]`).click();
+    }
+
+    function replaceImage(event, index) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelector(`.preview-image[data-index="${index}"]`).src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
 <style>
     .schedule-row {
         display: flex;

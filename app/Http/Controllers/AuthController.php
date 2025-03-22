@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Restaurant;
+use App\Models\OperationalHour;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Redirect;
@@ -75,19 +76,17 @@ class AuthController extends Controller
             'confirmation_password' => 'required',
         ]);
 
-        if ($request->register_as_restaurant == "1") {
-            return redirect('/registerrestaurant')
-                ->withCookie(cookie('temp_email', $request->email, 10, '/', null, false, false))
-                ->withCookie(cookie('temp_username', $request->username, 10, '/', null, false, false))
-                ->withCookie(cookie('temp_password', bcrypt($request->password), 10, '/', null, false, false));
-        }
+        $role = 1;
 
+        if ($request->register_as_restaurant == "1") {
+            $role = 2;
+        }
 
         $user = new User();
         $user->email = $request->email;
         $user->username = $request->username;
         $user->password = bcrypt($request->password);
-        $user->role = 1;
+        $user->role = $role;
         $user->save();
 
         return redirect('/login')->with('success', 'Your account has been created!');
@@ -95,12 +94,19 @@ class AuthController extends Controller
 
     //Restaurant by VEPEHA
 
-    public function postRegisterRestaurant(Request $request)
+    // public function restaurantCreation(Request $request)
+    // {
+    //     $request->validate([
+
+    //         'name' => 'required',
+
+    //     ]);
+    //     dd($request->name);
+    // }
+
+    public function restaurantCreation(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:users',
-            'username' => 'required|unique:users',
-            'password' => 'required',
             'name' => 'required',
             'number' => 'required',
             'city' => 'required',
@@ -109,15 +115,12 @@ class AuthController extends Controller
             'desc' => 'required',
             'image' => 'required|array|min:3', // Ensure at least 3 images
             'image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Image validation
+            'days' => 'required|array|min:1', // Ensure at least one schedule is selected
+            'open_time' => 'required|array',
+            'close_time' => 'required|array',
         ]);
 
-        // Create user account
-        $user = User::create([
-            'email' => $request->email,
-            'username' => $request->username,
-            'password' => $request->password,
-            'role' => 2, // Assuming 2 is for users
-        ]);
+        $user = auth()->user();
 
         // Prepare restaurant name for filename (replace spaces with dashes)
         $restaurantNameSlug = str_replace(' ', '-', strtolower($request->name));
@@ -136,10 +139,8 @@ class AuthController extends Controller
             }
         }
 
-
-
         // Create restaurant account linked to the user
-        Restaurant::create([
+        $restaurant = Restaurant::create([
             'user_id' => $user->id,
             'restaurantName' => $request->name,
             'restaurantPhoneNumber' => $request->number,
@@ -150,8 +151,21 @@ class AuthController extends Controller
             'restaurantImage' => implode(', ', $imagePaths), // Store as comma-separated paths
         ]);
 
-        return redirect('/login')->with('success', 'Your restaurant account has been created!');
+        // ✅ Save Operational Hours
+        if ($restaurant) {
+            foreach ($request->days as $index => $day) {
+                OperationalHour::create([
+                    'restaurant_id' => $restaurant->id,
+                    'day' => $day,
+                    'open_time' => $request->open_time[$index],
+                    'close_time' => $request->close_time[$index],
+                ]);
+            }
+        }
+
+        return redirect('/')->with('success', 'Your restaurant account has been created!');
     }
+
 
     public function settings()
     {
@@ -195,8 +209,14 @@ class AuthController extends Controller
                 // return view('dashboard.adminDashboard')->withSuccess('Login Success');
                 return redirect()->route('adminDashboard')->withSuccess('Login Success');
             } else if ($user->role == 2) {
-                // toastr()->success('Login Success');
-                return redirect()->route('restaurantDashboard')->withSuccess('Login Success');
+                // Check if a restaurant exists for this user
+                $restaurant = \App\Models\Restaurant::where('user_id', $user->id)->first();
+
+                if ($restaurant) {
+                    return redirect()->route('restaurantDashboard')->withSuccess('Login Success');
+                } else {
+                    return redirect()->route('noRestaurantPage')->withSuccess('Please register your restaurant first.');
+                }
             }
         } else {
             // If authentication fails, redirect back with an error message
