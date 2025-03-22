@@ -32,50 +32,65 @@
                                         <th>Points</th>
                                         <th>Is Active</th>
                                         <th>Description</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($rewards as $reward)
+                                    @if ($rewards->isEmpty())
                                         <tr>
-                                            <td>{{ $reward->name }}</td>
-                                            <td>
-                                                @if ($reward->image)
-                                                    <img src="{{ asset('storage/' . $reward->image) }}" width="50"
-                                                        height="50" alt="Reward Image">
-                                                @else
-                                                    No Image
-                                                @endif
-                                            </td>
-                                            <td>{{ $reward->category }}</td>
-                                            <td>{{ $reward->stock }}</td>
-                                            <td>{{ $reward->points }}</td>
-                                            <td>
-                                                <span class="badge {{ $reward->is_active ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $reward->is_active ? 'Active' : 'Inactive' }}
-                                                </span>
-                                            </td>
-                                            <td>{{ $reward->description ?? 'No description' }}</td>
-                                            <td>
-                                                <div class="d-flex gap-1">
-                                                    <!-- Tombol Edit -->
-                                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                        data-bs-target="#editRewardModal" data-id="{{ $reward->id }}">
-                                                        <i class="bi bi-pencil-square"></i> Edit
-                                                    </a>
-
-                                                    <!-- Form Hapus -->
-                                                    <form class="delete-form d-inline"
-                                                        action="{{ route('reward.destroy', $reward->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger delete-btn">
-                                                            <i class="bi bi-trash"></i> Delete
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
+                                            <td colspan="8" class="text-center">No reward found.</td>
                                         </tr>
-                                    @endforeach
+                                    @else
+                                        @foreach ($rewards as $reward)
+                                            <tr>
+                                                <td>{{ $reward->name }}</td>
+                                                <td>
+                                                    @if ($reward->image)
+                                                        <img src="{{ asset('storage/' . $reward->image) }}" width="50"
+                                                            height="50" alt="Reward Image">
+                                                    @else
+                                                        No Image
+                                                    @endif
+                                                </td>
+                                                <td>{{ $reward->category }}</td>
+                                                <td>{{ $reward->stock }}</td>
+                                                <td>{{ $reward->points }}</td>
+                                                <td>
+                                                    <span
+                                                        class="badge {{ $reward->is_active ? 'bg-success' : 'bg-danger' }}">
+                                                        {{ $reward->is_active ? 'Active' : 'Inactive' }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $reward->description ?? 'No description' }}</td>
+                                                <td>
+                                                    <div class="d-flex gap-1">
+                                                        <!-- Tombol Edit -->
+                                                        <a href="#" class="btn btn-sm btn-warning"
+                                                            data-bs-toggle="modal" data-bs-target="#editRewardModal"
+                                                            data-id="{{ $reward->id }}">
+                                                            <i class="bi bi-pencil-square"></i> Edit
+                                                        </a>
+
+                                                        <!-- Form Hapus -->
+                                                        <form class="delete-form d-inline"
+                                                            action="{{ route('reward.destroy', $reward->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger delete-btn">
+                                                                <i class="bi bi-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @if ($rewards->isEmpty())
+                                                <div class="text">
+                                                    <p>No reward found.</p>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    @endforelse
                                 </tbody>
 
                             </table>

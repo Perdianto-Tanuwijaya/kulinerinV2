@@ -43,7 +43,8 @@
 
                     <hr>
                     @if ($reservations->isEmpty())
-                        <p class="text-muted" style="text-align: center">No reservations found.</p>
+                        <p class="text-muted" style="text-align: center; font-style: italic; font-weight: bold;">No
+                            reservations found.</p>
                     @else
                         @foreach ($reservations as $reservation)
                             <div class="transaction-card bg-white d-flex mb-3">

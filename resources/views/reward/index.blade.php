@@ -13,6 +13,11 @@
 
     <link href="{{ asset('css/redem.css') }}" rel="stylesheet">
 </head>
+<style>
+    .center-text {
+        text-align: center;
+    }
+</style>
 @extends('master.masterCustomer')
 @section('content')
 
@@ -22,68 +27,77 @@
                 <h1>Reward Redemption</h1>
                 <div class="user-points">
                     <i class="fas fa-coins"></i>
-                    <span>Your Points: <span id="userPoints">{{ $userPoints->point ?? 0 }}</span></span>
+                    <span>Your Points: <span id="userPoints">{{ number_format($userPoints->point ?? 0) }}</span></span>
                 </div>
             </div>
 
             <div class="tabs">
-                <div class="tab {{ request('tab', 'rewards') === 'rewards' ? 'active' : '' }}" data-tab="rewards">Available
-                    Rewards</div>
-                <div class="tab {{ request('tab') === 'history' ? 'active' : '' }}" data-tab="history">Redemption History
+                <div class="tab {{ request('tab', 'rewards') === 'rewards' ? 'active' : '' }}" data-tab="rewards">
+                    Available Rewards
+                </div>
+                <div class="tab {{ request('tab') === 'history' ? 'active' : '' }}" data-tab="history">
+                    Redemption History
                 </div>
             </div>
 
             <div id="rewards" class="tab-content {{ request('tab', 'rewards') === 'rewards' ? 'active' : '' }}">
-                <div class="filters">
-                    <div class="filter-group">
-                        @foreach ($categories as $cat)
-                            <button class="filter-btn {{ $category === $cat ? 'active' : '' }}"
-                                data-category="{{ $cat }}">
-                                {{ $cat === 'all' ? 'All' : ucfirst($cat) }}
-                            </button>
+                @if ($rewards->isEmpty())
+                    <div class="text-center text mt-4">
+                        <p class="text-muted">No rewards available.</p>
+                    </div>
+                @else
+                    <div class="filters">
+                        <div class="filter-group">
+                            @foreach ($categories as $cat)
+                                <button class="filter-btn {{ $category === $cat ? 'active' : '' }}"
+                                    data-category="{{ $cat }}">
+                                    {{ $cat === 'all' ? 'All' : ucfirst($cat) }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="rewards-grid">
+                        @foreach ($rewards as $reward)
+                            <div class="reward-card" data-category="{{ $reward->category }}">
+                                <div class="reward-image"
+                                    style="background-image: url('{{ asset('storage/' . $reward->image) }}');">
+                                    <span class="reward-category">{{ ucfirst($reward->category) }}</span>
+                                    <span class="reward-stock">Stock: {{ $reward->stock }}</span>
+                                </div>
+                                <div class="reward-details">
+                                    <h3 class="reward-name">{{ $reward->name }}</h3>
+                                    <p class="reward-description">{{ $reward->description }}</p>
+                                </div>
+                                <div class="reward-footer">
+                                    <div class="reward-points">
+                                        <i class="fas fa-coins"></i>
+                                        <span>{{ number_format($reward->points) }} points</span>
+                                    </div>
+                                    <form id="redeemForm-{{ $reward->id }}" data-id="{{ $reward->id }}"
+                                        action="{{ route('rewards.redeem', ['id' => $reward->id]) }}" method="POST">
+                                        @csrf
+                                        <button type="button" class="redeem-btn"
+                                            onclick="redeemReward({{ $reward->id }})">
+                                            Redeem
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         @endforeach
                     </div>
-                </div>
-
-                <div class="rewards-grid">
-                    @foreach ($rewards as $reward)
-                        <div class="reward-card" data-category="{{ $reward->category }}">
-                            <div class="reward-image"
-                                style="background-image: url('{{ asset('storage/' . $reward->image) }}');">
-                                <span class="reward-category">{{ ucfirst($reward->category) }}</span>
-                                <span class="reward-stock">Stock: {{ $reward->stock }}</span>
-                            </div>
-                            <div class="reward-details">
-                                <h3 class="reward-name">{{ $reward->name }}</h3>
-                                <p class="reward-description">{{ $reward->description }}</p>
-                            </div>
-                            <div class="reward-footer">
-                                <div class="reward-points">
-                                    <i class="fas fa-coins"></i>
-                                    <span>{{ $reward->points }} points</span>
-                                </div>
-                                <form id="redeemForm-{{ $reward->id }}" data-id="{{ $reward->id }}"
-                                    action="{{ route('rewards.redeem', ['id' => $reward->id]) }}" method="POST">
-                                    @csrf
-                                    <button type="button" class="redeem-btn" onclick="redeemReward({{ $reward->id }})">
-                                        Redeem
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                @endif
             </div>
 
             <div id="history" class="tab-content {{ request('tab') === 'history' ? 'active' : '' }}">
-                <h2>Redemption History</h2>
+                @if ($redeems->isEmpty())
+                    <div class="text-center text mt-4">
+                        <p class="text-muted">You haven’t redeemed any rewards yet.</p>
+                    </div>
+                @else
+                    <h2>Redemption History</h2>
 
-                <div class="history-list">
-                    @if ($redeems->isEmpty())
-                        <div class="text">
-                            <p>You haven’t redeemed any rewards yet.</p>
-                        </div>
-                    @else
+                    <div class="history-list">
                         @foreach ($redeems as $item)
                             <div class="history-item">
                                 <div class="reward-info">
@@ -95,7 +109,8 @@
                                     <div class="reward-details">
                                         <h3 class="text-lg font-semibold mb-2">
                                             {{ $item->reward->name ?? 'Reward Not Found' }}</h3>
-                                        <p class="mb-2">Points Used: <strong>{{ $item->points_used }}</strong> Point(s)
+                                        <p class="mb-2">Points Used:
+                                            <strong>{{ number_format($item->points_used) }}</strong> Point(s)
                                         </p>
                                         <p class="mb-2">Redemption Code: <span
                                                 class="fst-italic">{{ $item->redemption_code }}</span></p>
@@ -107,13 +122,14 @@
                                 </div>
                             </div>
                         @endforeach
-                    @endif
-                </div>
+                    </div>
+                @endif
                 <div class="pagination-container pagination-right mt-4">
                     {{ $redeems->appends(['tab' => 'history'])->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>
+
         <div id="redeem-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <p id="modal-message"></p>
@@ -121,6 +137,7 @@
                 <button id="cancel-redeem">Cancel</button>
             </div>
         </div>
+
     </body>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

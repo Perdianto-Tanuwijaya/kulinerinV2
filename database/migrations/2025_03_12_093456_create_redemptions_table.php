@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('reward_id');
-            $table->foreign('reward_id')->references('id')->on('rewards');
+            $table->foreign('reward_id')->references('id')->on('rewards')->onDelete('cascade');
             $table->integer('points_used');
             $table->string('status');
             $table->string('redemption_code')->unique();

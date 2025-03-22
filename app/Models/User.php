@@ -58,6 +58,6 @@ class User extends Authenticatable
     }
     public function pointLoyalties()
     {
-        return $this->hasMany(PointLoyalty::class);
+        return $this->hasOne(PointLoyalty::class, 'user_id', 'id');
     }
 }
