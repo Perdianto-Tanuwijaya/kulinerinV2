@@ -269,7 +269,7 @@ class RestaurantController extends Controller
         }
 
         // Convert array to a comma-separated string for database storage
-        $restaurant->restaurantImage = implode(',', $existingImages);
+        $restaurant->restaurantImage = implode(', ', $existingImages);
 
         $restaurant->save();
 
