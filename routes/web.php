@@ -50,8 +50,8 @@ Route::middleware(['guest'])->group(function () {
     // Route::get('/registerrestaurant', [AuthController::class, 'showRegisterRestaurantForm'])->name('registerRestaurant');
     // Route::post('registerrestaurant', [AuthController::class, 'registerestaurant']);
 
-    Route::get('/registerrestaurant', [AuthController::class, 'showRegisterRestaurantForm'])->name('registerRestaurant.form');
-    Route::post('/registerrestaurant', [AuthController::class, 'postRegisterRestaurant'])->name('registerRestaurant.post');
+    // Route::get('/registerrestaurant', [AuthController::class, 'showRegisterRestaurantForm'])->name('registerRestaurant.form');
+    // Route::post('/registerrestaurant', [AuthController::class, 'postRegisterRestaurant'])->name('registerRestaurant.post');
 
     Route::get('/search', [GuestController::class, 'searchRestaurantbyGuest'])->name('search');
 });
@@ -108,6 +108,12 @@ Route::middleware(['admin'])->group(function () {
 });
 
 Route::middleware(['restaurant'])->group(function () {
+    Route::get('/restaurant-registration', function () {
+        return view('restaurant.registration.index'); // Create a view for this error
+    })->name('noRestaurantPage');
+
+    Route::post('/restaurant-registration', [AuthController::class, 'restaurantCreation'])->name('restaurantCreation');
+    // Route::post('registerrestaurant', [AuthController::class, 'registerestaurant']);
 
     Route::get('/restaurantDashboard', [AuthController::class, 'restaurantDashboard'])->name('restaurantDashboard');
 

@@ -16,7 +16,6 @@
         <div class="logo-container">
             <img src="{{ asset('asset/kulinerinLogo.png') }}" alt="Logo">
         </div>
-
         <div class="login-container">
             <h1>Register Your Restaurant</h1>
 
@@ -91,7 +90,6 @@
                 errorMsg.textContent = "";
             }
         }
-
 
         function validateImages() {
             let input = document.getElementById("imageUpload");

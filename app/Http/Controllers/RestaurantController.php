@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -215,19 +216,29 @@ class RestaurantController extends Controller
     public function settings()
     {
         $user = Auth::user();
-
-        // if (!$user) {
-        //     return redirect('/login')->with('error', 'Please log in first.');
-        // }
-
         $restaurant = Restaurant::where('user_id', $user->id)->first();
 
-        // if (!$restaurant) {
-        //     return redirect('/dashboard')->with('error', 'Restaurant not found.');
-        // }
+        $operationalHours = DB::table('operational_hours')
+            ->where('restaurant_id', $restaurant->id)
+            ->get();
 
-        return view('restaurant.settings.index', compact('restaurant'));
+        // Define the correct order of days
+        $dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        $schedules = $operationalHours->map(function ($row) {
+            return [
+                'day' => $row->day,
+                'open_time' => $row->open_time,
+                'close_time' => $row->close_time
+            ];
+        })->sortBy(function ($schedule) use ($dayOrder) {
+            return array_search($schedule['day'], $dayOrder);
+        })->values()->toArray(); // Reindex the array after sorting
+
+        return view('restaurant.settings.index', compact('restaurant', 'schedules'));
     }
+
+
 
     public function update(Request $request, $id)
     {
@@ -238,8 +249,11 @@ class RestaurantController extends Controller
             'address' => 'required|string|max:255',
             'desc' => 'required|string',
             'style' => 'required|string|in:Asian,Western,Fine Dining,Bar',
-            'image' => 'nullable|array', // Allow partial image uploads
+            'image' => 'nullable|array',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'days' => 'required|array',
+            'open_time' => 'required|array',
+            'close_time' => 'required|array',
         ]);
 
         $user = auth()->user();
@@ -254,25 +268,44 @@ class RestaurantController extends Controller
         $restaurant->restaurantDescription = $request->desc;
         $restaurant->restaurantStyle = $request->style;
 
-        // Get existing images
-        $existingImages = $request->input('existing_images', []); // Read hidden inputs
+        // Handle images
+        $existingImages = $request->input('existing_images', []);
         $existingImages = array_map(fn($img) => $img === 'null' ? null : $img, $existingImages);
 
-        // Upload new images while keeping the structure
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $index => $image) {
                 $extension = $image->getClientOriginalExtension();
                 $filename = "{$user->id}-{$restaurantNameSlug}" . ($index === 0 ? '' : $index) . ".{$extension}";
                 $image->move(public_path('storage/restaurant'), $filename);
-                $existingImages[$index] = "restaurant/" . $filename; // Replace only the uploaded slot
+                $existingImages[$index] = "restaurant/" . $filename;
             }
         }
 
-        // Convert array to a comma-separated string for database storage
         $restaurant->restaurantImage = implode(',', $existingImages);
-
         $restaurant->save();
 
-        return redirect()->back()->with('success', 'Restaurant details updated successfully!');
+        // Delete existing operational hours
+        DB::table('operational_hours')->where('restaurant_id', $restaurant->id)->delete();
+
+        // Insert new operational hours
+        $days = $request->days;
+        $openTimes = $request->open_time;
+        $closeTimes = $request->close_time;
+
+        $newSchedules = [];
+        foreach ($days as $index => $day) {
+            $newSchedules[] = [
+                'restaurant_id' => $restaurant->id,
+                'day' => $day,
+                'open_time' => $openTimes[$index],
+                'close_time' => $closeTimes[$index],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('operational_hours')->insert($newSchedules);
+
+        return redirect()->back()->with('success', 'Restaurant details and schedule updated successfully!');
     }
 }

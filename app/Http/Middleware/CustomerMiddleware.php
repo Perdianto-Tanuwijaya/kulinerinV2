@@ -18,11 +18,10 @@ class CustomerMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            $role=Auth::user()->role;
+            $role = Auth::user()->role;
             if (Auth::user()->role == '2') {
                 return redirect()->route('restaurantDashboard')->withErrors("You Don't Have Access.");
-            }
-            elseif (Auth::user()->role == '3') {
+            } elseif (Auth::user()->role == '3') {
                 return redirect()->route('adminDashboard')->withErrors("You Don't Have Access.");
             }
         } else {

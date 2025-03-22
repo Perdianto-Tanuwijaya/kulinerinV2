@@ -20,8 +20,20 @@ class RestaurantMiddleware
         if (Auth::check()) {
             if (Auth::user()->role == '1') {
                 return redirect()->route('customerDashboard')->withErrors("You Don't Have Access.");
-            }
-            elseif (Auth::user()->role == '3') {
+            } else if (Auth::user()->role == '2') {
+                if ($request->route()->getName() === 'noRestaurantPage' || $request->route()->getName() === 'restaurantCreation') {
+                    return $next($request);
+                }
+
+                $restaurantExists = \App\Models\Restaurant::where('user_id', Auth::user()->id)->exists();
+
+                if (!$restaurantExists) {
+                    return redirect()->route('noRestaurantPage')->withErrors("No associated restaurant found.");
+                }
+
+                // ✅ Allow POST requests and other valid routes to continue
+                return $next($request);
+            } else if (Auth::user()->role == '3') {
                 return redirect()->route('adminDashboard')->withErrors("You Don't Have Access.");
             }
         } else {
@@ -32,4 +44,3 @@ class RestaurantMiddleware
         return $next($request);
     }
 }
-
