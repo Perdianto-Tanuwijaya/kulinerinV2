@@ -45,7 +45,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('report') }}" class="nav-link {{ Request::routeIs('report') ? 'active' : '' }}">
+            <a href="{{ route('restaurantReport') }}" class="nav-link {{ Request::routeIs('restaurantReport') ? 'active' : '' }}">
                 <i class="bi bi-file-text"></i>
                 <span class="nav-text">Transaction Report</span>
             </a>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Models\OperationalHour;
+use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Redirect;
@@ -234,6 +235,98 @@ class AuthController extends Controller
         $restaurant = Restaurant::where('user_id', Auth::user()->id)->first();
         return view('restaurant.home.index', compact('restaurant'));
     }
+    public function restaurantReport(Request $request)
+    {
+        $restaurant = Restaurant::where('user_id', Auth::user()->id)->first();
+
+        // Get start and end dates from request
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        // Query reservations with date filter
+        $query = Reservation::where('restaurant_id', $restaurant->id);
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('reservationDate', [$startDate, $endDate]);
+        }
+
+        $reservations = $query->get();
+
+        // Check if the request is for export
+        if ($request->has('export')) {
+            return $this->exportCSV($reservations);
+        }
+
+        return view('restaurant.report.index', compact('restaurant', 'reservations'));
+    }
+
+    /**
+     * Export reservations data to CSV.
+     */
+    private function exportCSV($reservations)
+    {
+        $filename = "restaurant_reservations.csv";
+
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+
+        $output = fopen("php://output", "w");
+
+        // CSV Headers
+        fputcsv($output, ["tanggal", "transaksi", "menu", "harga per menu", "qty", "total"]);
+
+        $grandTotal = 0; // To track the total across all reservations
+        $hasData = false; // Flag to check if any data is written
+
+        foreach ($reservations as $reservation) {
+            $menuItems = explode(", ", $reservation['menuData']); // Split menu items by comma
+            $reservationTotal = 0; // Track total for this reservation
+
+            foreach ($menuItems as $menu) {
+                if (preg_match('/(\d+)x (.+) - Rp (\d+)/', $menu, $matches)) {
+                    $qty = (int) $matches[1];
+                    $menuName = trim($matches[2]);
+                    $price = (int) str_replace(',', '', $matches[3]); // Remove commas if needed
+                    $total = $qty * $price;
+
+                    fputcsv($output, [
+                        $reservation['reservationDate'],
+                        $reservation['bookingCode'],
+                        $menuName,
+                        $price,
+                        $qty,
+                        $total
+                    ]);
+
+                    $reservationTotal += $total;
+                    $hasData = true;
+                }
+            }
+
+            // Add subtotal row for each reservation
+            if ($hasData) {
+                fputcsv($output, ["", "", "Subtotal", "", "", $reservationTotal]);
+                fputcsv($output, []); // Empty row for spacing
+            }
+
+            $grandTotal += $reservationTotal;
+        }
+
+        // If no data was written, add a "No data" row
+        if (!$hasData) {
+            fputcsv($output, ["No data available"]);
+        } else {
+            // Final grand total row
+            fputcsv($output, ["", "", "Grand Total", "", "", $grandTotal]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+
+
+
 
     public function showRegisterRestaurantForm()
     {
@@ -257,6 +350,7 @@ class AuthController extends Controller
 
         return redirect('/login')->with('success', 'Your account has been created successfully!');
     }
+
 
 
 
