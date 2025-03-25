@@ -60,4 +60,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(PointLoyalty::class, 'user_id', 'id');
     }
+    public function advertisements()
+    {
+        return $this->hasMany(Advertisement::class);
+    }
 }

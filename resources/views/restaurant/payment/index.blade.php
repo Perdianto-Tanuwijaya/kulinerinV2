@@ -1,63 +1,79 @@
-<html lang="en">
+@extends('dashboard.restaurantDashboard')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Payment</title>
-</head>
+@section('title', 'Menu Management')
 
-<body>
-    <div id="messages-page" class="container-fluid p-4 content-page">
-        <h2>Messages</h2>
-        <p>Check your inbox and send messages.</p>
-        <div class="card border-0 shadow-sm mt-4">
-            <div class="card-body">
-                <h5 class="card-title">Inbox</h5>
-                <div class="list-group mt-3">
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User">
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0">John Doe</h6>
-                                    <small class="text-muted">3m ago</small>
-                                </div>
-                                <p class="mb-0 text-truncate">Hi there! I wanted to discuss the project
-                                    timeline...</p>
-                            </div>
+@section('content')
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Financial Menu</h2>
+                <div class="card border shadow-sm p-3 mb-4">
+                    <div
+                        class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                            <h4 class="">Current Balance</h4>
+                            <h2 class="fw-bold text-success">Rp {{ number_format($totalAmount) }}</h2>
                         </div>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User">
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0">Sarah Williams</h6>
-                                    <small class="text-muted">2h ago</small>
-                                </div>
-                                <p class="mb-0 text-truncate">The latest designs have been uploaded for
-                                    review...</p>
-                            </div>
+                        <button class="btn btn-danger mt-3 mt-md-0">Withdraw</button>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-body border">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="card-title mb-0">Incoming Payment</h5>
                         </div>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User">
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0">Mike Johnson</h6>
-                                    <small class="text-muted">Yesterday</small>
-                                </div>
-                                <p class="mb-0 text-truncate">Can we schedule a meeting to discuss the new
-                                    feature?</p>
-                            </div>
+                        <hr>
+                        @if (session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($payments as $index => $payment)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $payment->reservationDate }}</td>
+                                            <td>{{ $payment->reservationTime }}</td>
+                                            <td class="fw-bold text-success">+ Rp{{ number_format($payment->priceTotal) }}
+                                            </td>
+                                            <td>
+                                                @php
+                                                    $statusMapping = [
+                                                        'On Going' => 'Waiting',
+                                                        'Arrived' => 'Waiting',
+                                                        'Cancelled' => 'Approved',
+                                                        'Finished' => 'Approved',
+                                                    ];
+                                                @endphp
+                                                <span
+                                                    class="badge
+                                                {{ in_array($payment->reservationStatus, ['On Going', 'Arrived'])
+                                                    ? 'bg-warning'
+                                                    : ($payment->reservationStatus == 'Finished' || 'Cancelled'
+                                                        ? 'bg-success'
+                                                        : 'bg-secondary') }}">
+                                                    {{ in_array($payment->reservationStatus, ['On Going', 'Arrived']) ? 'Waiting' : 'Approved' }}
+                                                </span>
+
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                            </table>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</body>
-
-</html>
+@endsection

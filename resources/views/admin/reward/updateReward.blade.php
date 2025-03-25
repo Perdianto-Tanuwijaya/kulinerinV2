@@ -37,8 +37,8 @@
                     <div class="mb-3">
                         <label for="is_active" class="form-label">Is Active</label>
                         <select class="form-control" name="is_active" id="is_active" required>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
+                            <option value=1>Yes</option>
+                            <option value=0>No</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -99,12 +99,19 @@
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
+                    // console.log(data);
                     $('#rewardId').val(data.id);
                     $('#editRewardName').val(data.name);
                     $('#editPointPrice').val(parseFloat(data.points).toLocaleString(
                         'en-US'));
-
-                    $('#is_active').val(data.is_active);
+                    $("#is_active option").removeAttr('selected');
+                    $("#is_active option[value='" + (data.is_active ? "1" : "0") + "']")
+                        .attr('selected', 'selected');
+                    if (data.is_active == 0) {
+                        $("#is_active").val("0");
+                    } else {
+                        $("#is_active").val("1");
+                    }
                     $('#editDescription').val(data.description);
 
                     // Menyesuaikan value kategori yang sesuai dalam dropdown

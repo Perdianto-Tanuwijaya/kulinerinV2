@@ -32,9 +32,9 @@
             </a>
         </li>
         <li class="nav-item">
-            {{-- <a href="{{ route('') }}" class="nav-link {{ Request::routeIs('') ? 'active' : '' }}"> --}}
-            <i class="bi bi-cart"></i>
-            <span class="nav-text">Reservation</span>
+            <a href="{{ route('ad.index') }}" class="nav-link {{ Request::routeIs('ad.index') ? 'active' : '' }}">
+                <i class="bi bi-cart"></i>
+                <span class="nav-text">Advertisement</span>
             </a>
         </li>
         <li class="nav-item">

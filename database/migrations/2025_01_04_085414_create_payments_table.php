@@ -15,9 +15,13 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->integer("amount");
+            $table->unsignedBigInteger('restaurant_id');
+            $table->foreign('restaurant_id')->references('id')->on('restaurants');
+            $table->unsignedBigInteger('reservation_id');
+            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+            $table->decimal("amount");
             $table->date("paymentDate");
-            $table->string("paymentStatus");
+            $table->time("paymentTime");
             $table->timestamps();
         });
     }

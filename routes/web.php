@@ -15,6 +15,8 @@ use App\Http\Controllers\TableRestaurantController;
 use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\LoyaltyPointController;
+use App\Http\Controllers\AdvertisementController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 
 /*
@@ -104,12 +106,14 @@ Route::middleware(['admin'])->group(function () {
 
     //Manage Point Loyalty
     Route::get('admin/manage/points', [LoyaltyPointController::class, 'index'])->name('point.index');
-    // Route::get('/reward/{id}/edit', [RewardController::class, 'edit'])->name('reward.edit');
-    // Route::post('admin/update/point/{id}', [LoyaltyPointController::class, 'update'])->name('point.update');
     Route::get('admin/edit/{id}/point', [LoyaltyPointController::class, 'edit'])->name('point.edit');
     Route::post('admin/update/{id}/point', [LoyaltyPointController::class, 'update'])->name('point.update');
 
-    // Route::post('/addReward', [RewardController::class, 'store'])->name('reward.store');
+    //Manage Advertisement
+    Route::get('admin/manage/advertisement', [AdvertisementController::class, 'index'])->name('ad.index');
+    Route::get('admin/edit/{id}/advertisement', [AdvertisementController::class, 'edit'])->name('ad.edit');
+    Route::post('admin/update/{id}/advertisement', [AdvertisementController::class, 'update'])->name('ad.update');
+
 
 
     Route::get('/logoutAdmin', [AuthController::class, 'logout'])->name('logoutAdmin');
@@ -147,13 +151,7 @@ Route::middleware(['restaurant'])->group(function () {
     Route::post('/table/{id}/update', [TableRestaurantController::class, 'update'])->name('table.update');
     Route::post('/addTable', [TableRestaurantController::class, 'store'])->name('table.store');
 
-    Route::get('/order', function () {
-        return view('restaurant.order.index');
-    })->name('order');
-
-    Route::get('/payment', function () {
-        return view('restaurant.payment.index');
-    })->name('payment');
+    Route::get('/financial', [PaymentController::class, 'index'])->name('payment.index');;
 
     Route::get('/report', function () {
         return view('restaurant.report.index');

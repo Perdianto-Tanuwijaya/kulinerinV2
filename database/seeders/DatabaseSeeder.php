@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TableRestaurantSeeder::class,
             RewardSeeder::class,
             OperationalHoursSeeder::class,
+            AdvertisementSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

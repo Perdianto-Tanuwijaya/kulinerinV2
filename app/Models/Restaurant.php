@@ -41,4 +41,9 @@ class Restaurant extends Model
     {
         return $this->hasMany(OperationalHour::class, 'restaurant_id');
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'restaurant_id');
+    }
 }

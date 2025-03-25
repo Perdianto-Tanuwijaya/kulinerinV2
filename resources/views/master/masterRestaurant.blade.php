@@ -38,9 +38,10 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('payment') }}" class="nav-link {{ Request::routeIs('payment') ? 'active' : '' }}">
+            <a href="{{ route('payment.index') }}"
+                class="nav-link {{ Request::routeIs('payment.index') ? 'active' : '' }}">
                 <i class="bi bi-credit-card"></i>
-                <span class="nav-text">Payment</span>
+                <span class="nav-text">Financial</span>
             </a>
         </li>
         <li class="nav-item">

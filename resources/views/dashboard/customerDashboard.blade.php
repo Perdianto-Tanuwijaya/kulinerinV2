@@ -31,26 +31,37 @@
 
             <!-- Updated Advertisement Section -->
             <div class="ad-container">
-                <div class="ad-slide active">
-                    <img src="{{ asset('asset/imageRestaurant6.webp') }}" alt="Special Offer" class="ad-image">
-                </div>
-                <div class="ad-slide">
-                    <img src="{{ asset('asset/imageRestaurant4.jpg') }}" alt="New Restaurant" class="ad-image">
-                </div>
-                <div class="ad-slide">
-                    <img src="{{ asset('asset/imageRestaurant3.avif') }}" alt="Free Delivery" class="ad-image">
-                </div>
+                @foreach ($advertisements as $ad)
+                    @php
+                        // Ensure adImage is not empty and split the string into an array
+                        $images = $ad->adImage ? explode(', ', $ad->adImage) : [];
+                    @endphp
 
-                <!-- Navigation Arrows -->
+                    @foreach ($images as $index => $image)
+                        <div class="ad-slide {{ $loop->first ? 'active' : '' }}">
+                            <img src="{{ asset('storage/' . $image) }}" alt="Advertisement Image" class="ad-image">
+                        </div>
+                    @endforeach
+                @endforeach
+
+                <!-- Navigation Buttons -->
                 <button class="slide-nav prev-slide" onclick="changeSlide(-1)">❮</button>
                 <button class="slide-nav next-slide" onclick="changeSlide(1)">❯</button>
 
-                <!-- Dot indicators -->
+                <!-- Dot Indicators (Generated Dynamically Based on Image Count) -->
                 <div class="slide-controls">
-                    <button class="slide-dot active" onclick="goToSlide(0)"></button>
-                    <button class="slide-dot" onclick="goToSlide(1)"></button>
-                    <button class="slide-dot" onclick="goToSlide(2)"></button>
+                    @foreach ($advertisements as $ad)
+                        @php
+                            $images = $ad->adImage ? explode(', ', $ad->adImage) : [];
+                        @endphp
+
+                        @foreach ($images as $index => $image)
+                            <button class="slide-dot {{ $loop->first ? 'active' : '' }}"
+                                onclick="goToSlide({{ $index }})"></button>
+                        @endforeach
+                    @endforeach
                 </div>
+
             </div>
 
             <section>
