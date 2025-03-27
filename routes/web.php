@@ -118,7 +118,6 @@ Route::middleware(['admin'])->group(function () {
 
     Route::get('/logoutAdmin', [AuthController::class, 'logout'])->name('logoutAdmin');
     Route::post('logout', [AuthController::class, 'logout']);
-
 });
 
 Route::middleware(['restaurant'])->group(function () {
@@ -130,6 +129,7 @@ Route::middleware(['restaurant'])->group(function () {
     // Route::post('registerrestaurant', [AuthController::class, 'registerestaurant']);
 
     Route::get('/restaurantDashboard', [AuthController::class, 'restaurantDashboard'])->name('restaurantDashboard');
+
 
     //UPDATE RESTAURANT SETTINGS
     Route::put('/restaurant/{id}', [RestaurantController::class, 'update'])->name('restaurant.update');
@@ -155,9 +155,9 @@ Route::middleware(['restaurant'])->group(function () {
     Route::get('/financial', [PaymentController::class, 'index'])->name('payment.index');
     Route::post('/withdraw', [PaymentController::class, 'store'])->name('payment.store');
 
-    Route::get('/report', function () {
-        return view('restaurant.report.index');
-    })->name('report');
+    Route::get('/report', [AuthController::class, 'restaurantReport'])->name('restaurantReport');
+
+
 
     Route::get('/settings', [RestaurantController::class, 'settings'])->name('settings');
 

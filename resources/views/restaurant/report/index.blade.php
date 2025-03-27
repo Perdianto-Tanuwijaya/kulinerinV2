@@ -1,43 +1,68 @@
-<html lang="en">
+@extends('dashboard.restaurantDashboard')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Transaction Report</title>
-</head>
+@section('title', 'Reports')
 
-<body>
-    <div id="reports-page" class="container-fluid p-4 content-page">
-        <h2>Reports</h2>
-        <p>Access and generate reports.</p>
-        <div class="row mt-4">
-            <div class="col-md-6 mb-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Sales Reports</h5>
-                        <p>View and download sales performance reports.</p>
-                        <div class="mt-3">
-                            <button class="btn btn-outline-primary me-2">Generate Report</button>
-                            <button class="btn btn-outline-secondary">View Archive</button>
-                        </div>
-                    </div>
-                </div>
+@section('content')
+
+<div class="container">
+    <h2>{{ $restaurant->name }} Reservation Report</h2>
+    <p>View reservations for your restaurant.</p>
+
+    <!-- Date Range Filter Form -->
+    <form method="GET" action="{{ route('restaurantReport') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="start_date">Start Date</label>
+                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">User Activity</h5>
-                        <p>Monitor user engagement and activity.</p>
-                        <div class="mt-3">
-                            <button class="btn btn-outline-primary me-2">Generate Report</button>
-                            <button class="btn btn-outline-secondary">View Archive</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-4">
+                <label for="end_date">End Date</label>
+                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" name="export" value="1" class="btn btn-success">Export CSV</button>
             </div>
         </div>
-    </div>
-</body>
+    </form>
 
-</html>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Guests</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Booking Code</th>
+                    <th>Menu</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($reservations as $reservation)
+                <tr>
+                    <td>{{ $reservation->id }}</td>
+                    <td>{{ $reservation->user_id }}</td>
+                    <td>{{ $reservation->guest }}</td>
+                    <td>{{ $reservation->reservationDate }}</td>
+                    <td>{{ $reservation->reservationTime }}</td>
+                    <td>{{ $reservation->reservationStatus }}</td>
+                    <td>{{ $reservation->bookingCode }}</td>
+                    <td>{{ $reservation->menuData ?? '-' }}</td>
+                    <td>{{ $reservation->priceTotal ?? '-' }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="9">No reservations found.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

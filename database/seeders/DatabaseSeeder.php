@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             RewardSeeder::class,
             OperationalHoursSeeder::class,
             AdvertisementSeeder::class,
+            ReservationSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

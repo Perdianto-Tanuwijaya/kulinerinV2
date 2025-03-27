@@ -49,25 +49,11 @@
         <div class="input-group" style="display: grid; gap:20px">
             <label>Restaurant Operating Hours</label>
             <div id="schedule-container">
-                <div class="schedule-row">
-                    <select name="days[]" class="days-dropdown" onchange="updateDaySelection()">
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                        <option value="Sunday">Sunday</option>
-                    </select>
-                    <input type="time" name="open_time[]" class="open-time" required>
-                    <span>to</span>
-                    <input type="time" name="close_time[]" class="close-time" required>
-                    <button type="button" class="remove-schedule">✖</button>
-                </div>
-            </div>
-            <button type="button" style="width: min-content;background:transparent;color:#4286f5;text-decoration:underline; white-space:nowrap" id="add-schedule">Add </button>
 
+            </div>
+            <button type="button" id="add-schedule" style="width: min-content; background:transparent; color:#4286f5; text-decoration:underline; white-space:nowrap">Add</button>
         </div>
+
 
         <div class="input-group" style=" display: grid; height: min-content;">
             <label for="image">Update Images (Min 3)</label>
@@ -102,7 +88,7 @@
             </div>
 
             <small id="imageError" style="color: red; display: none;">Please upload at least 3 images.</small>
-            <button style="margin-top:20p" type="submit">Create Restaurant</button>
+            <button style="margin-top:20px" id="createRestaurant" type="submit">Create Restaurant</button>
 
         </div>
 
@@ -117,6 +103,20 @@
 </div>
 
 <script>
+    function generateTimeOptions(selectedValue = "") {
+        let options = "";
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                let hour = h.toString().padStart(2, "0");
+                let minute = m.toString().padStart(2, "0");
+                let time = `${hour}:${minute}`;
+                let selected = time === selectedValue ? "selected" : "";
+                options += `<option value="${time}" ${selected}>${time}</option>`;
+            }
+        }
+        return options;
+    }
+
     document.getElementById("add-schedule").addEventListener("click", function() {
         const container = document.getElementById("schedule-container");
         const selectedDays = [...document.querySelectorAll(".days-dropdown")].map(select => select.value);
@@ -138,14 +138,14 @@
         newRow.classList.add("schedule-row");
 
         newRow.innerHTML = `
-        <select name="days[]" class="days-dropdown" onchange="updateDaySelection()">
-            ${availableDays.map(day => `<option value="${day}">${day}</option>`).join("")}
-        </select>
-        <input type="time" name="open_time[]" class="open-time" required>
-        <span>to</span>
-        <input type="time" name="close_time[]" class="close-time" required>
-        <button type="button" class="remove-schedule">✖</button>
-    `;
+    <select name="days[]" class="days-dropdown" onchange="updateDaySelection()">
+        ${availableDays.map(day => `<option value="${day}">${day}</option>`).join("")}
+    </select>
+    <select name="open_time[]" class="open-time" required>${generateTimeOptions()}</select>
+    <span>to</span>
+    <select name="close_time[]" class="close-time" required>${generateTimeOptions("23:30")}</select>
+    <button type="button" class="remove-schedule">✖</button>
+`;
 
         container.appendChild(newRow);
 
@@ -157,39 +157,22 @@
         addTimeValidation(newRow);
     });
 
-    function updateDaySelection() {
-        const selectedDays = [...document.querySelectorAll(".days-dropdown")].map(select => select.value);
-        document.querySelectorAll(".days-dropdown").forEach(select => {
-            [...select.options].forEach(option => {
-                option.disabled = selectedDays.includes(option.value) && option.value !== select.value;
-            });
-        });
-    }
-
     function addTimeValidation(row) {
-        const openTimeInput = row.querySelector(".open-time");
-        const closeTimeInput = row.querySelector(".close-time");
+        const openTimeSelect = row.querySelector(".open-time");
+        const closeTimeSelect = row.querySelector(".close-time");
 
         function validateTime() {
-            if (openTimeInput.value && closeTimeInput.value && openTimeInput.value >= closeTimeInput.value) {
+            if (openTimeSelect.value && closeTimeSelect.value && openTimeSelect.value >= closeTimeSelect.value) {
                 alert("Invalid time selection! Opening time must be earlier than closing time.");
-                closeTimeInput.value = "";
+                closeTimeSelect.value = "23:30"; // Reset to default if invalid
             }
         }
 
-        openTimeInput.addEventListener("change", validateTime);
-        closeTimeInput.addEventListener("change", validateTime);
+        openTimeSelect.addEventListener("change", validateTime);
+        closeTimeSelect.addEventListener("change", validateTime);
     }
 
-    document.querySelectorAll(".remove-schedule").forEach(button => {
-        button.addEventListener("click", function() {
-            this.parentElement.remove();
-            updateDaySelection();
-        });
-    });
-
-    // Add validation for the default row
-    addTimeValidation(document.querySelector(".schedule-row"));
+    document.querySelectorAll(".schedule-row").forEach(addTimeValidation);
 </script>
 
 
@@ -211,32 +194,63 @@
 </script>
 
 <style>
+    #createRestaurant {
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
     .schedule-row {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 5px;
+        gap: 12px;
+        padding: 8px;
+        background: #f9f9f9;
+        border-radius: 6px;
     }
 
-    .days-dropdown {
-        padding: 5px;
+    .days-dropdown,
+    .open-time,
+    .close-time {
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
     }
 
     .remove-schedule {
         background: none;
         border: none;
-        color: red;
-        font-size: 16px;
+        color: #d9534f;
+        font-size: 18px;
         cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .remove-schedule:hover {
+        color: #c9302c;
     }
 
     #add-schedule {
-        margin-top: 5px;
+        margin-top: 8px;
         background-color: #007bff;
         color: white;
         border: none;
-        padding: 5px 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 4px;
         cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    #add-schedule:hover {
+        background-color: #0056b3;
     }
 </style>
 @endsection

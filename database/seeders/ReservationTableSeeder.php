@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-
-class ReservationSeeder extends Seeder
+class ReservationsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
