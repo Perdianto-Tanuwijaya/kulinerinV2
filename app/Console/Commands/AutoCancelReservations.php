@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 use App\Http\Controllers\ReservationController;
 use Carbon\Carbon;
 use App\Models\Reservation;
+use App\Models\Restaurant;
+use App\Models\RestaurantBalance;
+use App\Models\PointLoyalty;
 use Illuminate\Support\Facades\Log;
 
 class AutoCancelReservations extends Command
@@ -45,6 +48,28 @@ class AutoCancelReservations extends Command
             $reservation->reservationStatus = 'Cancelled';
             $reservation->save();
             $count++;
+        }
+
+        //Save to Restaurant balance table
+        $priceTotal = $reservation->priceTotal;
+        $restaurant = Restaurant::where('id', $reservation->restaurant_id)->first();
+
+        if ($restaurant && !is_null($priceTotal)) {
+            // Cek apakah sudah ada saldo sebelumnya
+            $existingBalance = RestaurantBalance::where('restaurant_id', $restaurant->id)->first();
+
+            if ($existingBalance) {
+                // Update saldo yang sudah ada
+                $existingBalance->increment('restaurantBalance', $priceTotal);
+            } else {
+                // Insert saldo baru
+                RestaurantBalance::create([
+                    'restaurant_id' => $restaurant->id,
+                    'restaurantBalance' => $priceTotal
+                ]);
+            }
+        } else {
+            \Log::info("Skipping balance update for reservation ID {$reservation->id} due to missing restaurant or null priceTotal.");
         }
 
         // Log hasilnya

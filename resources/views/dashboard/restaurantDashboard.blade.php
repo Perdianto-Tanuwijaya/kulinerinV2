@@ -6,14 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard')</title>
     <link rel="icon" href="{{ asset('asset/kulinerinLogo.png') }}" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        #create_restaurant_form{
+        #create_restaurant_form {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
+
         .sidebar {
             position: fixed;
             top: 0;

@@ -151,7 +151,9 @@ Route::middleware(['restaurant'])->group(function () {
     Route::post('/table/{id}/update', [TableRestaurantController::class, 'update'])->name('table.update');
     Route::post('/addTable', [TableRestaurantController::class, 'store'])->name('table.store');
 
-    Route::get('/financial', [PaymentController::class, 'index'])->name('payment.index');;
+    //Financial
+    Route::get('/financial', [PaymentController::class, 'index'])->name('payment.index');
+    Route::post('/withdraw', [PaymentController::class, 'store'])->name('payment.store');
 
     Route::get('/report', function () {
         return view('restaurant.report.index');

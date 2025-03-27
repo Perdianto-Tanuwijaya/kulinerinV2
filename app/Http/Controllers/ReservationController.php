@@ -13,7 +13,8 @@ use App\Models\Reservation;
 use App\Models\Restaurant;
 use App\Models\TableRestaurant;
 use App\Models\PointLoyalty;
-use App\Models\Payment;
+// use App\Models\Payment;
+use App\Models\RestaurantBalance;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -222,6 +223,28 @@ class ReservationController extends Controller
         $reservation->reservationStatus = 'Cancelled';
         $reservation->save();
 
+        //Save to Restaurant balance table
+        $priceTotal = $reservation->priceTotal;
+        $restaurant = Restaurant::where('id', $reservation->restaurant_id)->first();
+
+        if ($restaurant && !is_null($priceTotal)) {
+            // Cek apakah sudah ada saldo sebelumnya
+            $existingBalance = RestaurantBalance::where('restaurant_id', $restaurant->id)->first();
+
+            if ($existingBalance) {
+                // Update saldo yang sudah ada
+                $existingBalance->increment('restaurantBalance', $priceTotal);
+            } else {
+                // Insert saldo baru
+                RestaurantBalance::create([
+                    'restaurant_id' => $restaurant->id,
+                    'restaurantBalance' => $priceTotal
+                ]);
+            }
+        } else {
+            \Log::info("Skipping balance update for reservation ID {$reservation->id} due to missing restaurant or null priceTotal.");
+        }
+
         return response()->json([
             'message' => 'Reservation cancelled successfully',
         ]);
@@ -254,20 +277,28 @@ class ReservationController extends Controller
             // Log::info("User {$user->id} mendapatkan {$earnedPoints} poin dari reservasi #{$reservation->id}");
         }
 
-        //Save to Paynent table
-        // $priceTotal = $reservation->priceTotal;
+        //Save to Restaurant balance table
+        $priceTotal = $reservation->priceTotal;
+        $restaurant = Restaurant::where('id', $reservation->restaurant_id)->first();
 
-        // if (!is_null($priceTotal)) {
-        //     $payment = new Payment();
-        //     $payment->restaurant_id = $reservation->restaurant_id;
-        //     $payment->reservation_id = $reservation->id;
-        //     $payment->amount = $priceTotal;
-        //     $payment->paymentDate = Carbon::now()->toDateString(); // Format: YYYY-MM-DD
-        //     $payment->paymentTime = Carbon::now()->toTimeString(); // Format: HH:MM:SS
-        //     $payment->save();
-        // } else {
-        //     \Log::info("Skipping payment record for reservation ID {$reservation->id} due to null priceTotal.");
-        // }
+        if ($restaurant && !is_null($priceTotal)) {
+            // Cek apakah sudah ada saldo sebelumnya
+            $existingBalance = RestaurantBalance::where('restaurant_id', $restaurant->id)->first();
+
+            if ($existingBalance) {
+                // Update saldo yang sudah ada
+                $existingBalance->increment('restaurantBalance', $priceTotal);
+            } else {
+                // Insert saldo baru
+                RestaurantBalance::create([
+                    'restaurant_id' => $restaurant->id,
+                    'restaurantBalance' => $priceTotal
+                ]);
+            }
+        } else {
+            \Log::info("Skipping balance update for reservation ID {$reservation->id} due to missing restaurant or null priceTotal.");
+        }
+
 
         return response()->json([
             'message' => 'Your reservation has been Finished!',

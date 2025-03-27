@@ -11,19 +11,14 @@ class Payment extends Model
 
     protected $fillable = [
         'restaurant_id',
-        'reservation_id',
         'amount',
-        'paymentDate',
-        'paymentTime',
+        'withdrawDate',
+        'withdrawTime',
     ];
 
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+        return $this->belongsTo(Restaurant::class);
     }
 
-    public function reservation()
-    {
-        return $this->belongsTo(Reservation::class);
-    }
 }

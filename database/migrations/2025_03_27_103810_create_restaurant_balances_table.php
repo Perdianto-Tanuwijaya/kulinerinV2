@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('restaurant_balances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('restaurant_id');
             $table->foreign('restaurant_id')->references('id')->on('restaurants');
-            $table->decimal("amount");
-            $table->date("withdrawDate");
-            $table->time("withdrawTime");
-            $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->decimal('restaurantBalance')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('restaurant_balances');
     }
 };

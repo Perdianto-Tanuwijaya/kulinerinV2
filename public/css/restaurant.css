@@ -1,0 +1,194 @@
+        :root {
+            --primary-color: #D67B47ff;
+            --secondary-color: rgb(233, 148, 98);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --light-bg: #DECEB0ff;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .history-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item .reward-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .history-item .reward-image {
+            width: 60px;
+            height: 60px;
+            background-color: #f0f0f0;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .history-item .reward-details h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .history-item .reward-details p {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .history-item .reward-details span {
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .history-item .reward-meta {
+            text-align: right;
+        }
+
+        .history-item .reward-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .history-item .reward-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .empty-history {
+            text-align: center;
+            padding: 30px 0;
+            color: #666;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #D67B47 !important; /* Warna latar belakang aktif */
+            border-color: #D67B47 !important;
+            color: #ffffff !important; /* Warna teks aktif */
+        }
+
+        .pagination .page-link {
+            color: #5A3E2B !important; /* Warna teks default */
+            border-color: #DECEB0 !important;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #D67B47 !important; /* Warna hover */
+            color: #ffffff !important;
+        }
+
+        .text{
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-bar input {
+                width: 100%;
+            }
+
+            .rewards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            .pagination-right {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .pagination-right .pagination {
+                justify-content: flex-end;
+            }
+        }

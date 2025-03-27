@@ -34,9 +34,4 @@ class Reservation extends Model
     {
         return $this->belongsTo(TableRestaurant::class, 'table_restaurant_id', 'id');
     }
-
-    public function payment()
-    {
-        return $this->hasOne(Payment::class);
-    }
 }
