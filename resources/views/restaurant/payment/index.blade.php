@@ -14,7 +14,8 @@
                             <h4 class="">Current Balance</h4>
                             <h2 class="fw-bold text-success">Rp {{ number_format($balance ?? 0) }}</h2>
                         </div>
-                        <button class="btn btn-danger mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                        <button class="btn text-white mt-3 mt-md-0" style="background-color: #D67B47ff" data-bs-toggle="modal"
+                            data-bs-target="#withdrawModal">
                             Withdraw
                         </button>
                     </div>
@@ -137,7 +138,8 @@
                                                 @foreach ($withdraws as $index => $withdraw)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $withdraw->withdrawDate }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($withdraw->withdrawDate)->format('d F Y') }}
+                                                        </td>
                                                         <td>{{ $withdraw->withdrawTime }}</td>
                                                         <td class="fw-bold text-danger">-
                                                             Rp{{ number_format($withdraw->amount) }}
@@ -180,7 +182,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="withdrawAmount" class="form-label">Amount (Rp)</label>
-                            <input type="number" class="form-control" id="withdrawAmount" name="amount" required
+                            <input type="text" class="form-control" id="withdrawAmount" name="amount" required
                                 min="10000">
                         </div>
                         <div class="mb-3">
@@ -193,7 +195,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Withdraw</button>
+                            <button type="submit" class="btn text-white"
+                                style="background-color: #D67B47ff">Withdraw</button>
                         </div>
                     </form>
                 </div>
@@ -202,6 +205,23 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const withdrawAmount = document.getElementById("withdrawAmount");
+
+            withdrawAmount.addEventListener("input", function() {
+                let value = this.value.replace(/,/g, '').replace(/\D/g,
+                    ''); // Hapus semua koma dan non-angka
+                if (value) {
+                    this.value = new Intl.NumberFormat("en-US").format(value);
+                } else {
+                    this.value = "";
+                }
+            });
+
+            document.querySelector("form").addEventListener("submit", function() {
+                withdrawAmount.value = withdrawAmount.value.replace(/,/g, ''); // Hapus koma sebelum submit
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');

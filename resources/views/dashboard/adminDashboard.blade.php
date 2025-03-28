@@ -89,6 +89,29 @@
             margin-left: 80px;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #D67B47 !important;
+            border-color: #D67B47 !important;
+            color: #ffffff !important;
+        }
+
+        .pagination .page-link {
+            color: #5A3E2B !important;
+            border-color: #DECEB0 !important;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #D67B47 !important;
+            /* Warna hover */
+            color: #ffffff !important;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 80px;

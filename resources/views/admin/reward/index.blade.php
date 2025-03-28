@@ -11,8 +11,8 @@
                     <div class="card-body border">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="card-title mb-0">Reward List</h5>
-                            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#addRewardModal">
+                            <a href="#" class="btn btn-sm text-white" style="background-color: #D67B47ff"
+                                data-bs-toggle="modal" data-bs-target="#addRewardModal">
                                 <i class="bi bi-plus"></i> Add Reward
                             </a>
                         </div>

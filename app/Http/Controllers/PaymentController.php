@@ -43,6 +43,9 @@ class PaymentController extends Controller
             'amount' => 'required|numeric|min:10000',
         ]);
 
+        $amount = str_replace(',', '', $request->amount);
+        $amount = (float) $amount;
+
         // Ambil restoran berdasarkan user yang login
         $restaurant = Restaurant::where('user_id', Auth::id())->first();
 
@@ -62,7 +65,7 @@ class PaymentController extends Controller
             // Simpan data pembayaran (withdraw)
             $payment = Payment::create([
                 'restaurant_id' => $restaurant->id,
-                'amount' => $request->amount,
+                'amount' => $amount,
                 'withdrawDate' => Carbon::now()->toDateString(),
                 'withdrawTime' => Carbon::now()->toTimeString(),
                 'status' => 'Pending', // Default status pending
@@ -80,6 +83,52 @@ class PaymentController extends Controller
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    // Admin
+    public function show(Request $request){
+
+        $withdraws = Payment::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $withdraws->whereHas('restaurant', function ($query) use ($request) {
+                $query->where('restaurantName', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+
+        $withdraws = $withdraws->latest()->paginate(10);
+
+        return view ('admin.payment.index', compact('withdraws'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $payment = Payment::findOrFail($id);
+        $restaurant = Restaurant::findOrFail($payment->restaurant_id);
+
+        if ($request->status === 'Rejected') {
+            // Ambil saldo saat ini
+            $balance = RestaurantBalance::where('restaurant_id', $restaurant->id)->first();
+
+            if ($balance) {
+                // Tambahkan kembali jumlah yang ditarik ke saldo restoran
+                $balance->restaurantBalance += $payment->amount;
+                $balance->save();
+            } else {
+                // Jika saldo belum ada, buat record baru
+                RestaurantBalance::create([
+                    'restaurant_id' => $restaurant->id,
+                    'restaurantBalance' => $payment->amount
+                ]);
+            }
+        }
+
+        // Update status pembayaran
+        $payment->status = $request->status;
+        $payment->save();
+
+        return response()->json(['message' => 'Payment status updated successfully.']);
+    }
+
 
 
 }

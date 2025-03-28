@@ -3,9 +3,8 @@
 </head>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h5 class="nav-text">Dashboard</h5>
+        <h5 class="nav-text" style="color: black;">Dashboard Admin</h5>
     </div>
-
     <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-chevron-left" id="toggle-icon"></i>
     </button>
@@ -38,21 +37,10 @@
             </a>
         </li>
         <li class="nav-item">
-            {{-- <a href="{{ route('payment') }}" class="nav-link {{ Request::routeIs('payment') ? 'active' : '' }}"> --}}
-            <i class="bi bi-credit-card"></i>
-            <span class="nav-text">Payment</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            {{-- <a href="{{ route('report') }}" class="nav-link {{ Request::routeIs('report') ? 'active' : '' }}"> --}}
-            <i class="bi bi-file-text"></i>
-            <span class="nav-text">Transaction Report</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            {{-- <a href="{{ route('settings') }}" class="nav-link {{ Request::routeIs('settings') ? 'active' : '' }}"> --}}
-            <i class="bi bi-gear"></i>
-            <span class="nav-text">Settings</span>
+            <a href="{{ route('withdraw.show') }}"
+                class="nav-link {{ Request::routeIs('withdraw.show') ? 'active' : '' }}">
+                <i class="bi bi-credit-card"></i>
+                <span class="nav-text">Payment</span>
             </a>
         </li>
         <li class="nav-item sign-out">
@@ -69,6 +57,30 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        background-color: #D67B47ff;
+    }
+
+    .nav-link {
+        color: white;
+    }
+
+    .nav-link.active {
+        background-color: rgb(226, 152, 109) !important;
+        /* Warna lebih gelap dari navbar */
+        color: black !important;
+        /* font-weight: bold; */
+        border-radius: 5px;
+        padding: 8px 12px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        /* Efek transisi halus */
+    }
+
+    .nav-link:hover {
+        background-color: rgb(226, 152, 109) !important;
+        /* Warna navbar asli */
+        color: DECEB0ff !important;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .nav {

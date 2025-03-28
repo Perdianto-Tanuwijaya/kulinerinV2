@@ -28,7 +28,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Points</button>
+                        <button type="submit" class="btn text-white" style="background-color: #D67B47ff">Add
+                            Points</button>
                     </div>
                 </form>
             </div>

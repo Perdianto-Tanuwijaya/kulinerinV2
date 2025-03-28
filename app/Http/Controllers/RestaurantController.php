@@ -80,6 +80,7 @@ class RestaurantController extends Controller
     public function indexRestaurants($id)
     {
         $restaurants = Restaurant::findOrFail($id);
+        $openingHours = OperationalHour::where('restaurant_id', $restaurants->id)->get();
         $menuItems = MenuRestaurant::where('restaurant_id', $id)
             ->orderBy('category')
             ->get()
@@ -103,7 +104,7 @@ class RestaurantController extends Controller
         $totalAvailableTables = TableRestaurant::where('restaurant_id', $id)
             ->sum('availableTables');
 
-        return view('index.restaurantIndex', compact('restaurants', 'ratingData', 'images', 'menuItems', 'capacities', 'totalAvailableTables', 'operationalHour'));
+        return view('index.restaurantIndex', compact('restaurants', 'openingHours', 'ratingData', 'images', 'menuItems', 'capacities', 'totalAvailableTables', 'operationalHour'));
     }
 
     public function checkAvailableTables(Request $request)
@@ -156,40 +157,6 @@ class RestaurantController extends Controller
 
         return response()->json(['availableTables' => $availableTables]);
     }
-
-
-    // public function getAvailableTables(Request $request)
-    // {
-    //     $restaurantId = $request->input('restaurant_id'); // Ambil restaurant_id dari request
-    //     $reservationDate = $request->input('date'); // Ambil tanggal dari request
-
-    //     // Validasi input (optional)
-    //     if (!$restaurantId || !$reservationDate) {
-    //         return response()->json(['error' => 'Missing restaurant_id or date'], 400);
-    //     }
-
-    //     // Ambil hanya meja yang sesuai dengan restaurant_id
-    //     $tables = TableRestaurant::where('restaurant_id', $restaurantId)->get()->map(function ($table) use ($reservationDate) {
-    //         // Hitung jumlah reservasi untuk meja ini pada tanggal tertentu
-    //         $reservedCount = Reservation::where('table_restaurant_id', $table->id)
-    //             ->where('reservationDate', $reservationDate)
-    //             ->count();
-
-    //         // Hitung sisa meja yang tersedia
-    //         $availableTables = max(0, $table->availableTables - $reservedCount);
-
-    //         return [
-    //             'id' => $table->id,
-    //             'capacity' => $table->tableCapacity,
-    //             'available' => $availableTables,
-    //         ];
-    //     });
-
-    //     return response()->json($tables);
-    // }
-
-
-
 
     public function getRating($id)
     {

@@ -161,6 +161,13 @@
             display: flex;
             gap: 20px;
         }
+
+        .custom-spinner {
+            width: 3rem;
+            height: 3rem;
+            border-width: 4px;
+            color: #D67B47ff;
+        }
     </style>
     @extends('master.masterCustomer')
     @section('content')
@@ -199,7 +206,7 @@
                                 <span class="ms-2 text-muted">({{ $totalReviewers }} Reviews)</span>
                             </div>
                         </div>
-                        <hr>
+                        {{-- <hr> --}}
                         <div class="row" style="padding-left: 1.5rem; padding-right:0rem">
                             <div class="col-md-8">
                                 <div class="bg-light mb-3 border overflow-hidden"
@@ -234,26 +241,105 @@
                 </nav>
             </header>
             <section class="section" id="Overview">
-                <!-- Overview content -->
-                <div class="tab-pane p-3 fade show active border" style="margin-bottom: 3rem; margin-top:1.5rem"
-                    id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                    <div class="row" style="padding:5px 0px 5px 20px">
+                <div class="tab-pane p-4 fade show active border rounded bg-light shadow-sm"
+                    style="margin-bottom: 3rem; margin-top: 1.5rem" id="overview" role="tabpanel"
+                    aria-labelledby="overview-tab">
+
+                    <div class="row align-items-center">
                         <div class="col-md-6">
-                            <h5>About</h5>
-                            <p><strong>Location:</strong> {{ $restaurants->restaurantAddress }}</p>
-                            <p><strong>Opening Hours:</strong> Mon-Sun: 6am-9pm</p>
-                            <p><strong>Contact:</strong> {{ $restaurants->restaurantPhoneNumber }} |
-                                {{ $restaurants->restaurantEmail }}</p>
+                            <h4 class="mb-3">About</h4>
+                            <p>
+                                <i class="bi bi-geo-alt-fill text-danger"></i>
+                                <strong> Location:</strong> {{ $restaurants->restaurantAddress }}
+                            </p>
+                            <p>
+                                <i class="bi bi-clock text-primary"></i>
+                                <strong> Opening Hours:</strong>
+                            </p>
+                            <ul>
+                                @php
+                                    // Daftar hari dalam seminggu
+                                    $daysOfWeek = [
+                                        'Monday',
+                                        'Tuesday',
+                                        'Wednesday',
+                                        'Thursday',
+                                        'Friday',
+                                        'Saturday',
+                                        'Sunday',
+                                    ];
+                                    // Mengubah data database menjadi array dengan key sebagai nama hari
+                                    $openingHoursArray = $openingHours->pluck('open_time', 'day')->toArray();
+                                    $closingHoursArray = $openingHours->pluck('close_time', 'day')->toArray();
+                                @endphp
+
+                                @foreach ($daysOfWeek as $day)
+                                    <li>
+                                        <strong>{{ $day }}:</strong>
+                                        @if (isset($openingHoursArray[$day]) && isset($closingHoursArray[$day]))
+                                            {{ date('g:i A', strtotime($openingHoursArray[$day])) }} -
+                                            {{ date('g:i A', strtotime($closingHoursArray[$day])) }}
+                                        @else
+                                            <span class="text-danger">Closed</span>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                            <p>
+                                <i class="bi bi-telephone-fill text-success"></i>
+                                <strong> Contact:</strong>
+                                {{ $restaurants->restaurantPhoneNumber }} |
+                                {{ $restaurants->user->email }}
+                            </p>
+                        </div>
+
+                        <!-- Bagian Kanan: Gambar Restoran -->
+                        <div class="col-md-6 text-center">
+                            <div id="restaurantCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    @php
+                                        $images = explode(',', $restaurants->restaurantImage); // Ubah string menjadi array
+                                    @endphp
+
+                                    @if (!empty($images) && count($images) > 0)
+                                        @foreach ($images as $key => $image)
+                                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                <img src="{{ asset('storage/' . trim($image)) }}"
+                                                    class="img-fluid rounded shadow-sm" alt="Restaurant Image"
+                                                    style="max-height: 250px; object-fit: cover; width: 100%;">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="carousel-item active">
+                                            <img src="{{ asset('storage/default.jpg') }}"
+                                                class="img-fluid rounded shadow-sm" alt="No Image Available"
+                                                style="max-height: 250px; object-fit: cover; width: 100%;">
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Tombol Navigasi -->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#restaurantCarousel"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#restaurantCarousel"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
-            <hr>
+            {{-- <hr> --}}
             <section class="section" id="Review">
                 <!-- Review content -->
-                <div class="col-md-8 border" style="margin: 3rem 0rem">
-                    <div class="card p-3 h-auto">
-                        <h5><strong>Customer Reviews</strong></h5>
+                <div class="col-12 border" style="margin: 3rem 0rem">
+                    <div class="card p-3 h-auto w-100">
+                        <h5 class="text-start"><strong>Customer Reviews</strong></h5>
                         <hr>
                         @if ($ratingData['reviews']->isEmpty())
                             <p class="text-muted text-center">No reviews yet. Be the first to review!</p>
@@ -264,10 +350,11 @@
                                         style="height: auto; display: {{ $index < 5 ? 'block' : 'none' }};">
                                         <!-- User and Time -->
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <p class="fst-italic m-0"><strong>By {{ $review->user->username }} :</strong>
-                                            </p>
-                                            <span
-                                                class="fw-light text-muted small">{{ $review->created_at->diffForHumans() }}</span>
+                                            <p class="fst-italic m-0"><strong>By {{ $review->user->username }}
+                                                    :</strong></p>
+                                            <span class="fw-light text-muted small">
+                                                {{ $review->created_at->diffForHumans() }}
+                                            </span>
                                         </div>
 
                                         <!-- Rating -->
@@ -289,18 +376,20 @@
                             </div>
 
                             @if (count($ratingData['reviews']) > 5)
-                                <button id="see-more-btn" class="btn btn-primary mt-3">See More</button>
+                                <div class="text-center">
+                                    <button id="see-more-btn" class="btn btn-primary mt-3">See More</button>
+                                </div>
                             @endif
                         @endif
                     </div>
                 </div>
             </section>
-            <hr>
+            {{-- <hr> --}}
             <section class="section" id="BookTable" style="margin-bottom: 5rem">
-                <!-- Book Table content -->
-                <div class="row" style="margin: 3rem 0rem">
-                    <div class="col">
-                        <h5 style="padding-top:1rem">Reserve a Table</h5>
+                <div class="row g-4 align-items-center">
+                    <!-- Form Booking -->
+                    <div class="col-12 col-md-6">
+                        <h5 class="pt-3 text-center text-md-start">Reserve a Table</h5>
                         <div class="mb-3">
                             <label for="inputGuest" class="form-label">Number of People</label>
                             <select id="inputGuest" name="guest" class="form-control" required>
@@ -309,8 +398,8 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <input type="hidden" name="restaurantId" value="{{ $restaurants->id }}">
-                        {{-- <p>*Available Tables: <span id="availableTables">{{ $totalAvailableTables }}</span></p> --}}
                         <p><span id="availableTables"></span></p>
 
                         <div class="mb-3">
@@ -324,36 +413,40 @@
                             <select id="inputTime" name="reservationTime" class="form-control" required>
                             </select>
                         </div>
-                        <div>
-                            <input type="hidden" id="inputRestaurantName" name="restaurantName"
-                                value={{ $restaurants->restaurantName }}>
-                        </div>
-                        <button id="myBtn" onclick="myBtnClick()" class="btn btn-primary">Reserve Now</button>
+
+                        <input type="hidden" id="inputRestaurantName" name="restaurantName"
+                            value="{{ $restaurants->restaurantName }}">
+
+                        <button id="myBtn" onclick="myBtnClick()" class="btn text-white w-100"
+                            style="background-color: #D67B47ff" disabled>
+                            Reserve Now
+                        </button>
+
                     </div>
 
-                    <div class="col">
-                        <h5 style="padding-top:2rem">Table Reservation Terms and Conditions</h5>
-                        <ol>
+                    <!-- Syarat dan Ketentuan -->
+                    <div class="col-12 col-md-6">
+                        <h5 class="pt-3 text-center text-md-start">Table Reservation Terms and Conditions</h5>
+                        <ol class="ps-md-3">
                             <li><strong>Reservation Confirmation</strong><br>
-                                All table reservations must be confirmed by the restaurant before being finalized.
-                            </li>
+                                All table reservations must be confirmed by the restaurant before being finalized.</li>
                             <li><strong>Reservation Time</strong><br>
-                                The reserved table will be held for up to 15 minutes from the scheduled reservation time.
-                            </li>
+                                The reserved table will be held for up to 30 minutes from the scheduled reservation
+                                time.</li>
                             <li><strong>Group Size</strong><br>
                                 The number of people specified during the reservation must match the actual number of
-                                guests.
-                            </li>
+                                guests.</li>
                             <li><strong>Cancellation Policy</strong><br>
-                                Cancellations must be made at least 24 hours before the scheduled reservation time.
-                            </li>
-                            <li><strong>Deposit or Pre-payment</strong><br>
-                                A deposit or pre-payment may be required for large groups or special events.
+                                Cancellations must be made at least 1 hours before the scheduled reservation time.</li>
+                            <li><strong>Non-Refundable Payment</strong><br>
+                                All menu payments are final and non-refundable. Please review your order carefully
+                                before confirming the purchase.
                             </li>
                         </ol>
                     </div>
                 </div>
             </section>
+
             <hr>
             <section class="section" id="Menu">
                 <h3 class="text-center">{{ $restaurants->restaurantName }} - Menu</h3>
@@ -397,7 +490,7 @@
 
         </div>
         <div id="myModal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content" id="modalContent">
                 <hr>
                 <p class="reservation-text">You are making a reservation for</p>
                 <p class="reservation-text" id="guest-info"></p>
@@ -405,8 +498,8 @@
                     ({{ $restaurants->restaurantCity }}) on</p>
                 <p class="reservation-text" id="reservation-info"></p>
                 <div class="button-group">
-                    <button class="button cancel-button" onclick="spanClick()">Cancel</button>
-                    <form action="{{ route('booking', $restaurants->id) }}" method="POST">
+                    <button class="button cancel-button" onclick="closeModal()">Cancel</button>
+                    <form action="{{ route('booking', $restaurants->id) }}" method="POST" id="bookingForm">
                         @csrf
                         <input type="hidden" name="guest" id="guest_hidden">
                         <input type="hidden" name="tableType" id="area_hidden">
@@ -417,14 +510,25 @@
                         <input type="hidden" name="menuData" id="menu_hidden">
                         <input type="hidden" name="tableRestaurantId" value="">
                         <input type="hidden" name="restaurantId" value="{{ $restaurants->id }}">
-                        <button type="submit" class="button book-button">Book Table</button>
+
+                        <button type="button" class="button book-button" id="bookTableBtn"
+                            style="background-color: #D67B47ff">
+                            Book Table
+                        </button>
                     </form>
 
                     <form action="{{ route('indexMenu', $restaurants->id) }}" id="bookMenuForm" method="POST">
                         @csrf
                     </form>
-                    <button class="button book-button" onclick="redirectToMenu()">Book Menu</button>
+                    <button class="button book-button" style="background-color: #D67B47ff"
+                        onclick="redirectToMenu()">Book Menu</button>
                 </div>
+            </div>
+
+            <!-- Loading Animation -->
+            <div class="modal-content text-center" id="loadingContent" style="display: none;">
+                <p class="reservation-text"><strong>Booking In Progress...</strong></p>
+                <div class="spinner-border custom-spinner" role="status"></div>
             </div>
         </div>
         <script>
@@ -440,88 +544,121 @@
                 });
             });
 
+            document.addEventListener("DOMContentLoaded", function() {
+                const bookButton = document.getElementById("bookTableBtn");
+                const modalContent = document.getElementById("modalContent");
+                const loadingContent = document.getElementById("loadingContent");
+                const bookingForm = document.getElementById("bookingForm");
+
+                bookButton.addEventListener("click", function() {
+                    // Sembunyikan modal konten utama dan tampilkan animasi loading
+                    modalContent.style.display = "none";
+                    loadingContent.style.display = "block";
+
+                    // Nonaktifkan tombol agar tidak bisa diklik ulang
+                    bookButton.disabled = true;
+
+                    // Kirim form setelah 1.5 detik
+                    setTimeout(() => {
+                        bookingForm.submit();
+                    }, 1500);
+                });
+            });
+
+            function closeModal() {
+                document.getElementById("myModal").style.display = "none";
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
-                // Ambil semua element yang dibutuhkan
                 const restaurantId = document.querySelector('input[name="restaurantId"]').value;
                 const guestSelect = document.getElementById('inputGuest');
                 const dateInput = document.getElementById('inputDate');
                 const timeSelect = document.getElementById('inputTime');
                 const availableTablesSpan = document.getElementById('availableTables');
+                const reserveButton = document.getElementById('myBtn');
 
-                // Function untuk update time slots berdasarkan tanggal yang dipilih
                 function updateTimeSlots() {
                     const selectedDate = dateInput.value;
                     const today = '{{ date('Y-m-d') }}';
                     const currentHour = {{ (int) date('H') }};
                     const currentMinute = {{ (int) date('i') }};
 
-                    // Clear existing options
-                    timeSelect.innerHTML = ''; // Kosongkan pilihan tanpa opsi default
+                    timeSelect.innerHTML = ''; // Kosongkan pilihan waktu
+                    reserveButton.disabled = true; // Nonaktifkan tombol saat data dimuat
 
-                    // Get day of week from selected date
                     const date = new Date(selectedDate);
                     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                     const dayOfWeek = days[date.getDay()];
 
-                    // Fetch operational hours via AJAX
+                    // Fetch operational hours
                     fetch(`/api/operational-hours/${dayOfWeek}/${restaurantId}`)
                         .then(response => response.json())
                         .then(data => {
-                            if (data.operational_hours) {
-                                const openTime = data.operational_hours.open_time.split(':');
-                                const closeTime = data.operational_hours.close_time.split(':');
+                            timeSelect.innerHTML = ''; // Reset time options
 
-                                const openHour = parseInt(openTime[0]);
-                                const openMinute = parseInt(openTime[1]);
-                                const closeHour = parseInt(closeTime[0]);
-                                const closeMinute = parseInt(closeTime[1]);
+                            if (!data.operational_hours) {
+                                // Jika tidak ada data operational hours, berarti restoran tutup
+                                const option = document.createElement('option');
+                                option.textContent = 'Closed';
+                                option.value = 'closed';
+                                timeSelect.appendChild(option);
 
-                                // Flag to track if we added any options
-                                let optionsAdded = false;
+                                // Nonaktifkan tombol reservasi
+                                reserveButton.disabled = true;
+                                availableTablesSpan.innerHTML =
+                                    "<strong><em>*Restaurant is closed on this day</em></strong>";
+                                return;
+                            }
 
-                                // Generate time slots in 15-minute intervals
-                                for (let hour = openHour; hour <= closeHour; hour++) {
-                                    for (let minuteIdx = 0; minuteIdx < 4; minuteIdx++) {
-                                        const minute = ['00', '15', '30', '45'][minuteIdx];
+                            // Jika restoran buka, lanjutkan seperti biasa
+                            const openTime = data.operational_hours.open_time.split(':');
+                            const closeTime = data.operational_hours.close_time.split(':');
 
-                                        // Skip if we're past the closing time
-                                        if (hour === closeHour && parseInt(minute) >= closeMinute) {
+                            const openHour = parseInt(openTime[0]);
+                            const openMinute = parseInt(openTime[1]);
+                            const closeHour = parseInt(closeTime[0]);
+                            const closeMinute = parseInt(closeTime[1]);
+
+                            let optionsAdded = false;
+
+                            for (let hour = openHour; hour <= closeHour; hour++) {
+                                for (let minuteIdx = 0; minuteIdx < 4; minuteIdx++) {
+                                    const minute = ['00', '15', '30', '45'][minuteIdx];
+
+                                    if (hour === closeHour && parseInt(minute) >= closeMinute) {
+                                        continue;
+                                    }
+
+                                    if (hour === openHour && parseInt(minute) < openMinute) {
+                                        continue;
+                                    }
+
+                                    if (selectedDate === today) {
+                                        if (hour < currentHour || (hour === currentHour && parseInt(minute) <=
+                                                currentMinute)) {
                                             continue;
                                         }
-
-                                        // Skip if we're before the opening time
-                                        if (hour === openHour && parseInt(minute) < openMinute) {
-                                            continue;
-                                        }
-
-                                        // For today, skip times that have already passed
-                                        if (selectedDate === today) {
-                                            if (hour < currentHour || (hour === currentHour && parseInt(minute) <=
-                                                    currentMinute)) {
-                                                continue;
-                                            }
-                                        }
-
-                                        const timeStr = `${hour.toString().padStart(2, '0')}:${minute}`;
-                                        const option = document.createElement('option');
-                                        option.value = timeStr;
-                                        option.textContent = `${timeStr} WIB`;
-                                        timeSelect.appendChild(option);
-                                        optionsAdded = true;
                                     }
-                                }
 
-                                // After updating time slots, check available tables if time is selected
-                                if (optionsAdded) {
-                                    // Auto-select the first option and trigger the check
-                                    if (timeSelect.options.length > 0) {
-                                        timeSelect.selectedIndex = 0;
-                                        checkAvailableTables();
-                                    }
-                                } else {
-                                    availableTablesSpan.innerHTML =
-                                        "<strong><em>*No Available Time Slots</em></strong>";
+                                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute}`;
+                                    const option = document.createElement('option');
+                                    option.value = timeStr;
+                                    option.textContent = `${timeStr} WIB`;
+                                    timeSelect.appendChild(option);
+                                    optionsAdded = true;
                                 }
+                            }
+
+                            if (optionsAdded) {
+                                reserveButton.disabled = false; // Aktifkan tombol jika ada opsi waktu
+                                if (timeSelect.options.length > 0) {
+                                    timeSelect.selectedIndex = 0;
+                                    checkAvailableTables();
+                                }
+                            } else {
+                                availableTablesSpan.innerHTML =
+                                    "<strong><em>*No Available Time Slots</em></strong>";
+                                reserveButton.disabled = true;
                             }
                         })
                         .catch(error => {
@@ -529,16 +666,17 @@
                             const option = document.createElement('option');
                             option.textContent = 'Error loading time slots';
                             timeSelect.appendChild(option);
+                            reserveButton.disabled = true;
                         });
                 }
 
-                // Function untuk cek available tables
                 function checkAvailableTables() {
                     const guest = guestSelect.value;
                     const reservationDate = dateInput.value;
                     const reservationTime = timeSelect.value;
 
-                    if (!guest || !reservationDate || !reservationTime) {
+                    if (!guest || !reservationDate || !reservationTime || reservationTime === 'closed') {
+                        reserveButton.disabled = true;
                         return;
                     }
 
@@ -565,21 +703,22 @@
                         .then(data => {
                             availableTablesSpan.innerHTML =
                                 `<strong><em>*Available Tables :</em></strong> <strong><em>${data.availableTables}</em></strong>`;
+                            reserveButton.disabled = false; // Aktifkan tombol jika ada meja tersedia
                         })
                         .catch(error => {
                             console.error('Error checking available tables:', error);
                             availableTablesSpan.textContent = "Error checking available tables!";
+                            reserveButton.disabled = true;
                         });
                 }
 
-                // Event listeners
                 guestSelect.addEventListener('change', checkAvailableTables);
                 dateInput.addEventListener('change', updateTimeSlots);
                 timeSelect.addEventListener('change', checkAvailableTables);
 
-                // Initialize on page load
                 updateTimeSlots();
             });
+
 
             // Select all navigation links and sections
             const navLinks = document.querySelectorAll('nav a[href^="#"]');

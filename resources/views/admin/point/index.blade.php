@@ -14,8 +14,8 @@
                             <form action="{{ route('point.index') }}" method="GET" class="d-flex" style="max-width: 300px;">
                                 <input type="text" name="search" class="form-control form-control-sm me-2"
                                     placeholder="Search username..." value="{{ request('search') }}" style="width: 150px;">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-search"></i>
+                                <button type="submit" class="btn btn-sm" style="background-color: #D67B47ff">
+                                    <i class="bi bi-search text-white"></i>
                                 </button>
                             </form>
                         </div>
@@ -41,7 +41,8 @@
                                             <td>{{ $point->username ?? 'No Username' }}</td>
                                             <td>{{ number_format($point->pointLoyalties->point ?? 0) }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                <a href="#" class="btn btn-sm text-white"
+                                                    style="background-color: #D67B47ff" data-bs-toggle="modal"
                                                     data-bs-target="#updatePointModal" data-id="{{ $point->id }}">
                                                     <i class="bi bi-plus"></i>Add Points
                                                 </a>

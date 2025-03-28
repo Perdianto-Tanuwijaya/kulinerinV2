@@ -151,7 +151,7 @@
             const guestInfo = "{{ $guestInfo }}";
             const bookDate = "{{ $reservationDate }}";
             console.log(bookDate);
-            // const reservationDate = "{{ $reservationDate }}";
+
             const reservationDate = new Date(bookDate).toLocaleDateString('en-GB', {
                 day: 'numeric',
                 month: 'long',
@@ -160,14 +160,15 @@
             const reservationTime = "{{ $reservationTime }}";
             const restaurantName = "{!! $restaurantName !!}";
             const restaurantCity = "{{ $restaurantCity }}";
-            const restaurantId = "{{ $restaurantId }}"
+            const restaurantId = "{{ $restaurantId }}";
 
             let orderData = [];
             let grandTotal = 0;
 
             // Collect all menu items with their qty, name, and price
             document.querySelectorAll('.card').forEach(function(card) {
-                let qty = parseInt(card.querySelector('.quantity-value').value, 10);
+                let qtyInput = card.querySelector('.quantity-value');
+                let qty = qtyInput ? parseInt(qtyInput.value, 10) : 0;
                 let menuName = card.querySelector('#menuName').textContent.trim();
                 let menuPrice = card.querySelector('#menuPrice').textContent.replace(/[^0-9.]/g, '');
                 let priceTotal = qty * parseFloat(menuPrice);
@@ -183,6 +184,12 @@
                     grandTotal += priceTotal;
                 }
             });
+
+            // Validasi: Jika tidak ada menu yang dipilih, tampilkan alert dan hentikan proses
+            if (orderData.length === 0) {
+                alert("Please select at least one menu item before proceeding to the cart.");
+                return;
+            }
 
             const form = document.getElementById('detailOrderForm');
 
@@ -236,6 +243,7 @@
 
             form.submit();
         }
+
 
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".quantity-container").forEach(container => {

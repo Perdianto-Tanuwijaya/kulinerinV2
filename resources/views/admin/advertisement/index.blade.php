@@ -46,9 +46,10 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-1">
-                                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                        data-bs-target="#editAdModal" data-id="{{ $ad->id }}">
-                                                        <i class="bi bi-pencil-square">Update</i>
+                                                    <a href="#" class="btn btn-sm" style="background-color: #D67B47ff"
+                                                        data-bs-toggle="modal" data-bs-target="#editAdModal"
+                                                        data-id="{{ $ad->id }}">
+                                                        <i class="bi bi-pencil-square text-white"> Update</i>
                                                     </a>
                                                 </div>
                                             </td>

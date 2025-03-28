@@ -50,12 +50,6 @@ Route::middleware(['guest'])->group(function () {
     // Route::post('register', [AuthController::class, 'register']);
     Route::post('/register', [AuthController::class, 'register'])->middleware('web');
 
-    // Route::get('/registerrestaurant', [AuthController::class, 'showRegisterRestaurantForm'])->name('registerRestaurant');
-    // Route::post('registerrestaurant', [AuthController::class, 'registerestaurant']);
-
-    // Route::get('/registerrestaurant', [AuthController::class, 'showRegisterRestaurantForm'])->name('registerRestaurant.form');
-    // Route::post('/registerrestaurant', [AuthController::class, 'postRegisterRestaurant'])->name('registerRestaurant.post');
-
     Route::get('/search', [GuestController::class, 'searchRestaurantbyGuest'])->name('search');
 });
 
@@ -65,7 +59,6 @@ Route::middleware(['customer'])->group(function () {
 
     Route::get('/searchRestaurant', [RestaurantController::class, 'searchRestaurant'])->name('searchRestaurant');
     Route::get('/restaurantIndex/{id}', [RestaurantController::class, 'indexRestaurants'])->name('indexRestaurants');
-    // Route::post('/available-tables', [RestaurantController::class, 'getAvailableTables']);
     Route::post('/check-available-tables', [RestaurantController::class, 'checkAvailableTables'])->name('check.available.tables');
 
     Route::get('/logoutCustomer', [AuthController::class, 'logout'])->name('logoutCustomer');
@@ -82,7 +75,6 @@ Route::middleware(['customer'])->group(function () {
     Route::get('/history', [ReservationController::class, 'history'])->name('history');
     Route::post('/history', [ReservationController::class, 'filterDate'])->name('filter');
     Route::delete('/reservation/{id}/cancel', [ReservationController::class, 'cancelOrder'])->name('reservation.cancelOrder');
-    // Route::get('/auto-cancel-reservations', [ReservationController::class, 'cancelOrder']);
     Route::post('/reservation/{id}/finish', [ReservationController::class, 'finishOrder'])->name('reservation.finishOrder');
     Route::post('/rating/store', [RatingRestaurantController::class, 'store'])->name('rating.store');
 
@@ -114,8 +106,11 @@ Route::middleware(['admin'])->group(function () {
     Route::get('admin/edit/{id}/advertisement', [AdvertisementController::class, 'edit'])->name('ad.edit');
     Route::post('admin/update/{id}/advertisement', [AdvertisementController::class, 'update'])->name('ad.update');
 
+    //Payment
+    Route::get('/financial/withdraw', [PaymentController::class, 'show'])->name('withdraw.show');
+    Route::post('/update-payment-status/{id}', [PaymentController::class, 'updateStatus']);
 
-
+    //Logout
     Route::get('/logoutAdmin', [AuthController::class, 'logout'])->name('logoutAdmin');
     Route::post('logout', [AuthController::class, 'logout']);
 });
@@ -129,7 +124,6 @@ Route::middleware(['restaurant'])->group(function () {
     // Route::post('registerrestaurant', [AuthController::class, 'registerestaurant']);
 
     Route::get('/restaurantDashboard', [AuthController::class, 'restaurantDashboard'])->name('restaurantDashboard');
-
 
     //UPDATE RESTAURANT SETTINGS
     Route::put('/restaurant/{id}', [RestaurantController::class, 'update'])->name('restaurant.update');
@@ -151,16 +145,17 @@ Route::middleware(['restaurant'])->group(function () {
     Route::post('/table/{id}/update', [TableRestaurantController::class, 'update'])->name('table.update');
     Route::post('/addTable', [TableRestaurantController::class, 'store'])->name('table.store');
 
-    //Financial
+    //Financial (Payment)
     Route::get('/financial', [PaymentController::class, 'index'])->name('payment.index');
     Route::post('/withdraw', [PaymentController::class, 'store'])->name('payment.store');
 
+    //Report
     Route::get('/report', [AuthController::class, 'restaurantReport'])->name('restaurantReport');
 
-
-
+    //Settings
     Route::get('/settings', [RestaurantController::class, 'settings'])->name('settings');
 
+    //Logout
     Route::get('/logoutRestaurant', [AuthController::class, 'logout'])->name('logoutRestaurant');
     Route::post('logout', [AuthController::class, 'logout']);
 });
