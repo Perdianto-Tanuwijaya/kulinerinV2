@@ -10,6 +10,7 @@ use App\Models\RestaurantBalance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -41,7 +42,10 @@ class PaymentController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric|min:10000',
+            'bankName' => 'required|string',
+            'bankAccount' => 'required|string',
         ]);
+        Log::info("Masuk: " . $request->bankName);
 
         $amount = str_replace(',', '', $request->amount);
         $amount = (float) $amount;
@@ -63,13 +67,15 @@ class PaymentController extends Controller
         DB::beginTransaction();
         try {
             // Simpan data pembayaran (withdraw)
-            $payment = Payment::create([
-                'restaurant_id' => $restaurant->id,
-                'amount' => $amount,
-                'withdrawDate' => Carbon::now()->toDateString(),
-                'withdrawTime' => Carbon::now()->toTimeString(),
-                'status' => 'Pending', // Default status pending
-            ]);
+            $payment = new Payment();
+            $payment->restaurant_id = $restaurant->id;
+            $payment->amount = $amount;
+            $payment->bankName = $request->bankName;
+            $payment->bankAccount = $request->bankAccount;
+            $payment->withdrawDate = Carbon::now()->toDateString();
+            $payment->withdrawTime = Carbon::now()->toTimeString();
+            $payment->status = 'Pending';
+            $payment->save();
 
             // Kurangi saldo restaurantBalance
             RestaurantBalance::where('restaurant_id', $restaurant->id)

@@ -32,24 +32,25 @@ use Illuminate\Http\Request;
 
 Route::get('/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
-// Route::post('search', [RestaurantController::class, 'searchRestaurant']);
-
-
 
 
 Route::middleware(['guest'])->group(function () {
 
-    Route::get('/', [GuestController::class, 'guestDashboard'])->name('guestDashboard');
-
+    //Auth
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('web');
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
     Route::post('login', [AuthController::class, 'login']);
 
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    //Dashboard
+    Route::get('/', [GuestController::class, 'guestDashboard'])->name('guestDashboard');
 
-    // Route::post('register', [AuthController::class, 'register']);
-    Route::post('/register', [AuthController::class, 'register'])->middleware('web');
+    //IndexRestaurant
+    Route::get('/guest/restaurantIndex/{id}', [GuestController::class, 'indexRestaurants'])->name('indexRestaurantsGuest');
+    Route::post('/checkAvailableTables', [RestaurantController::class, 'checkAvailableTables'])->name('checkAvailableTables');
 
+    //Search
+    // Route::get('/searchRestaurant', [RestaurantController::class, 'searchRestaurant'])->name('searchRestaurant');
     Route::get('/search', [GuestController::class, 'searchRestaurantbyGuest'])->name('search');
 });
 

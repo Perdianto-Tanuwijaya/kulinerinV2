@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Guest</title>
+    <title>Dashboard | Customer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
@@ -26,31 +26,40 @@
 <body>
     @extends('master.masterGuest')
     @section('content')
-        <main class="main-content">
-            {{-- <div class="greeting">Hello, {{ Auth::user()->username }}</div> --}}
-
+        <main class="main-content" style="padding-top: 6px">
             <!-- Updated Advertisement Section -->
             <div class="ad-container">
-                <div class="ad-slide active">
-                    <img src="{{ asset('asset/imageRestaurant6.webp') }}" alt="Special Offer" class="ad-image">
-                </div>
-                <div class="ad-slide">
-                    <img src="{{ asset('asset/imageRestaurant4.jpg') }}" alt="New Restaurant" class="ad-image">
-                </div>
-                <div class="ad-slide">
-                    <img src="{{ asset('asset/imageRestaurant3.avif') }}" alt="Free Delivery" class="ad-image">
-                </div>
+                @foreach ($advertisements as $ad)
+                    @php
+                        // Ensure adImage is not empty and split the string into an array
+                        $images = $ad->adImage ? explode(', ', $ad->adImage) : [];
+                    @endphp
 
-                <!-- Navigation Arrows -->
+                    @foreach ($images as $index => $image)
+                        <div class="ad-slide {{ $loop->first ? 'active' : '' }}">
+                            <img src="{{ asset('storage/' . $image) }}" alt="Advertisement Image" class="ad-image">
+                        </div>
+                    @endforeach
+                @endforeach
+
+                <!-- Navigation Buttons -->
                 <button class="slide-nav prev-slide" onclick="changeSlide(-1)">❮</button>
                 <button class="slide-nav next-slide" onclick="changeSlide(1)">❯</button>
 
-                <!-- Dot indicators -->
+                <!-- Dot Indicators (Generated Dynamically Based on Image Count) -->
                 <div class="slide-controls">
-                    <button class="slide-dot active" onclick="goToSlide(0)"></button>
-                    <button class="slide-dot" onclick="goToSlide(1)"></button>
-                    <button class="slide-dot" onclick="goToSlide(2)"></button>
+                    @foreach ($advertisements as $ad)
+                        @php
+                            $images = $ad->adImage ? explode(', ', $ad->adImage) : [];
+                        @endphp
+
+                        @foreach ($images as $index => $image)
+                            <button class="slide-dot {{ $loop->first ? 'active' : '' }}"
+                                onclick="goToSlide({{ $index }})"></button>
+                        @endforeach
+                    @endforeach
                 </div>
+
             </div>
 
             <section>
@@ -60,9 +69,8 @@
                         @foreach ($restaurants as $restaurant)
                             <div class="col-12 col-md-4 mb-4">
                                 <div class="card"
-                                    onclick="window.location='{{ route('indexRestaurants', $restaurant->id) }}'">
+                                    onclick="window.location='{{ route('indexRestaurantsGuest', $restaurant->id) }}'">
                                     <div class="restaurant-image">
-                                        <!-- Use asset() to generate the correct URL for the image -->
                                         <img src="{{ asset('storage/' . $restaurant->firstImage) }}" class="card-img-top"
                                             alt="Restaurant Name" style="height: 200px; object-fit: cover;">
                                     </div>
@@ -84,9 +92,8 @@
                         @foreach ($restaurantsDine as $restaurant)
                             <div class="col-12 col-md-4 mb-4">
                                 <div class="card"
-                                    onclick="window.location='{{ route('indexRestaurants', $restaurant->id) }}'">
+                                    onclick="window.location='{{ route('indexRestaurantsGuest', $restaurant->id) }}'">
                                     <div class="restaurant-image">
-                                        <!-- Use asset() to generate the correct URL for the image -->
                                         <img src="{{ asset('storage/' . $restaurant->firstImage) }}" class="card-img-top"
                                             alt="Restaurant Name" style="height: 200px; object-fit: cover;">
                                     </div>
@@ -108,7 +115,7 @@
                         @foreach ($restaurantsHoliday as $restaurant)
                             <div class="col-12 col-md-4 mb-4">
                                 <div class="card"
-                                    onclick="window.location='{{ route('indexRestaurants', $restaurant->id) }}'">
+                                    onclick="window.location='{{ route('indexRestaurantsGuest', $restaurant->id) }}'">
                                     <div class="restaurant-image">
                                         <!-- Use asset() to generate the correct URL for the image -->
                                         <img src="{{ asset('storage/' . $restaurant->firstImage) }}" class="card-img-top"
@@ -126,47 +133,67 @@
             </section>
         </main>
         <script>
-            let currentSlide = 0;
-            const slides = document.querySelectorAll('.ad-slide');
-            const dots = document.querySelectorAll('.slide-dot');
-            let slideInterval = setInterval(nextSlide, 3000); // Change slide in seconds
+            document.addEventListener("DOMContentLoaded", function() {
+                let slides = document.querySelectorAll(".ad-slide");
+                let dots = document.querySelectorAll(".slide-dot");
+                let currentIndex = 0;
+                let slideInterval;
 
-            function showSlide(n) {
-                // Remove active class from all slides and dots
-                slides.forEach(slide => slide.classList.remove('active'));
-                dots.forEach(dot => dot.classList.remove('active'));
+                function showSlide(index) {
+                    slides.forEach((slide, i) => {
+                        slide.classList.remove("active");
+                        dots[i].classList.remove("active");
+                    });
 
-                // Update current slide index
-                currentSlide = (n + slides.length) % slides.length;
+                    slides[index].classList.add("active");
+                    dots[index].classList.add("active");
+                }
 
-                // Add active class to current slide and dot
-                slides[currentSlide].classList.add('active');
-                dots[currentSlide].classList.add('active');
-            }
+                function nextSlide() {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    showSlide(currentIndex);
+                }
 
-            function changeSlide(direction) {
-                clearInterval(slideInterval); // Reset timer when manually changed
-                showSlide(currentSlide + direction);
-                slideInterval = setInterval(nextSlide, 5000); // Restart timer
-            }
+                function prevSlide() {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    showSlide(currentIndex);
+                }
 
-            function goToSlide(n) {
-                clearInterval(slideInterval);
-                showSlide(n);
-                slideInterval = setInterval(nextSlide, 5000);
-            }
+                function goToSlide(index) {
+                    currentIndex = index;
+                    showSlide(currentIndex);
+                }
 
-            function nextSlide() {
-                showSlide(currentSlide + 1);
-            }
+                function startSlideshow() {
+                    slideInterval = setInterval(nextSlide, 4500); // Ganti slide setiap 4.5 detik
+                }
 
-            // Pause slideshow when hovering over container
-            document.querySelector('.ad-container').addEventListener('mouseenter', () => {
-                clearInterval(slideInterval);
-            });
+                function stopSlideshow() {
+                    clearInterval(slideInterval);
+                }
 
-            document.querySelector('.ad-container').addEventListener('mouseleave', () => {
-                slideInterval = setInterval(nextSlide, 5000);
+                document.querySelector(".prev-slide").addEventListener("click", function() {
+                    prevSlide();
+                    stopSlideshow();
+                    startSlideshow();
+                });
+
+                document.querySelector(".next-slide").addEventListener("click", function() {
+                    nextSlide();
+                    stopSlideshow();
+                    startSlideshow();
+                });
+
+                dots.forEach((dot, index) => {
+                    dot.addEventListener("click", function() {
+                        goToSlide(index);
+                        stopSlideshow();
+                        startSlideshow();
+                    });
+                });
+
+                showSlide(currentIndex);
+                startSlideshow();
             });
         </script>
     @endsection

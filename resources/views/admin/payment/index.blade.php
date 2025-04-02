@@ -31,8 +31,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Restaurant Name</th>
-                                        <th>Withdraw Date</th>
-                                        <th>Withdraw Time</th>
+                                        <th>Withdraw Date & Time</th>
+                                        <th>Bank Name</th>
+                                        <th>Bank Account</th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -43,9 +44,11 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}.</td>
                                             <td>{{ $wd->restaurant->restaurantName ?? 'No Restaurant Name' }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($wd->withdrawDate)->format('d F Y') }}</td>
                                             <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($wd->withdrawTime)->format('H:i') }}</td>
+                                                {{ \Carbon\Carbon::parse($wd->withdrawDate . ' ' . $wd->withdrawTime)->format('d F Y, H:i') }}
+                                            </td>
+                                            <td>{{ $wd->bankName }}</td>
+                                            <td>{{ $wd->bankAccount }}</td>
                                             <td>Rp{{ number_format($wd->amount) }}</td>
                                             <td class="fst-italic">{{ $wd->status }}</td>
                                             <td>

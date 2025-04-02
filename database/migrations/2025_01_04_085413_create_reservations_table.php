@@ -22,7 +22,6 @@ return new class extends Migration
             $table->unsignedBigInteger('table_restaurant_id');
             $table->foreign('table_restaurant_id')->references('id')->on('table_restaurants')->constrained()->onDelete('cascade');
             $table->integer("guest");
-            // $table->string("tableType");
             $table->string("restaurantName")->nullable();
             $table->date("reservationDate");
             $table->time("reservationTime");

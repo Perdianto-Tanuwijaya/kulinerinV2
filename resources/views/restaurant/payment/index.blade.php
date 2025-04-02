@@ -187,11 +187,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="bankName" class="form-label">Bank Name</label>
-                            <input type="text" class="form-control" id="bankName" name="bank_name" required>
+                            <input type="text" class="form-control" id="bankName" name="bankName" required>
                         </div>
                         <div class="mb-3">
                             <label for="bankAccount" class="form-label">Bank Account</label>
-                            <input type="text" class="form-control" id="bankAccount" name="bank_account" required>
+                            <input type="text" class="form-control" id="bankAccount" name="bankAccount" required>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -222,6 +222,7 @@
                 withdrawAmount.value = withdrawAmount.value.replace(/,/g, ''); // Hapus koma sebelum submit
             });
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');

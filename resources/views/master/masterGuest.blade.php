@@ -12,7 +12,9 @@
 
 <body>
     <nav class="navbar">
-        <img src="{{ asset('asset/kulinerinLogo.png') }}" alt="Kulinerin Logo" class="logo">
+        <a href="{{ route('guestDashboard') }}">
+            <img src="{{ asset('asset/kulinerinLogo.png') }}" alt="Kulinerin Logo" class="logo">
+        </a>
         <div class="search-container">
             <form action="{{ route('search') }}" method="GET">
                 <input type="text" name="keyword" class="search-bar" placeholder="Search Any Restaurant Here"
