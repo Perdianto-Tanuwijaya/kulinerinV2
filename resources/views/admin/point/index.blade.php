@@ -39,20 +39,21 @@
                                         <tr>
                                             <td>{{ $point->id }}</td>
                                             <td>{{ $point->username ?? 'No Username' }}</td>
-                                            <td>{{ number_format($point->pointLoyalties->point ?? 0) }}</td>
+                                            <td>
+                                                @if ($point->pointLoyalties->isNotEmpty())
+                                                    @foreach ($point->pointLoyalties as $pointLoyalty)
+                                                        {{ number_format($pointLoyalty->point) }}
+                                                    @endforeach
+                                                @else
+                                                    0
+                                                @endif
+                                            </td>
                                             <td>
                                                 <a href="#" class="btn btn-sm text-white"
                                                     style="background-color: #D67B47ff" data-bs-toggle="modal"
                                                     data-bs-target="#updatePointModal" data-id="{{ $point->id }}">
                                                     <i class="bi bi-plus"></i>Add Points
                                                 </a>
-                                                {{-- <button class="btn btn-primary btn-sm editPointBtn"
-                                                    data-id="{{ $point->id }}" data-username="{{ $point->username }}"
-                                                    data-points="{{ $point->point }}" data-bs-toggle="modal"
-                                                    data-bs-target="#updatePointModal">
-                                                    Edit
-                                                </button> --}}
-
                                             </td>
                                         </tr>
                                     @empty

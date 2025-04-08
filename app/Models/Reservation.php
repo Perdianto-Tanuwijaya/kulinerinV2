@@ -17,21 +17,21 @@ class Reservation extends Model
 
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+        return $this->belongsTo(Restaurant::class);
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function ratingRestaurant()
     {
-        return $this->belongsTo(RatingRestaurant::class, 'rating_id');
+        return $this->belongsTo(RatingRestaurant::class);
     }
 
     public function tableRestaurant()
     {
-        return $this->belongsTo(TableRestaurant::class, 'table_restaurant_id', 'id');
+        return $this->belongsTo(TableRestaurant::class);
     }
 }

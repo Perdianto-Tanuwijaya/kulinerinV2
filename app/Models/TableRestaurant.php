@@ -14,10 +14,10 @@ class TableRestaurant extends Model
     // Tambahkan relasi ke reservations
     public function reservations()
     {
-        return $this->hasMany(Reservation::class, 'table_restaurant_id', 'id');
+        return $this->hasMany(Reservation::class);
     }
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+        return $this->belongsTo(Restaurant::class);
     }
 }

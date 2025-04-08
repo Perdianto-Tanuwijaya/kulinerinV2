@@ -46,11 +46,11 @@ class User extends Authenticatable
     ];
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class, 'user_id');
+        return $this->belongsTo(Restaurant::class);
     }
     public function ratingRestaurants()
     {
-        return $this->hasMany(RatingRestaurant::class, 'user_id');
+        return $this->hasMany(RatingRestaurant::class);
     }
     public function redemptions()
     {
@@ -58,7 +58,7 @@ class User extends Authenticatable
     }
     public function pointLoyalties()
     {
-        return $this->hasOne(PointLoyalty::class, 'user_id', 'id');
+        return $this->hasMany(PointLoyalty::class);
     }
     public function advertisements()
     {

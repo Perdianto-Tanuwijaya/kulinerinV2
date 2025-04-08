@@ -20,35 +20,40 @@ class Restaurant extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function ratingRestaurants()
     {
-        return $this->hasMany(RatingRestaurant::class, 'restaurant_id');
+        return $this->hasMany(RatingRestaurant::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
     }
 
     public function menuRestaurants()
     {
-        return $this->hasMany(MenuRestaurant::class, 'restaurant_id');
+        return $this->hasMany(MenuRestaurant::class);
     }
     public function tableRestaurants()
     {
-        return $this->hasMany(TableRestaurant::class, 'restaurant_id');
+        return $this->hasMany(TableRestaurant::class);
     }
 
     public function operationalHours()
     {
-        return $this->hasMany(OperationalHour::class, 'restaurant_id');
+        return $this->hasMany(OperationalHour::class);
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'restaurant_id');
+        return $this->hasMany(Payment::class);
     }
 
     public function restaurantBalances()
     {
-        return $this->hasMany(RestaurantBalance::class, 'restaurant_id');
+        return $this->hasMany(RestaurantBalance::class);
     }
 }

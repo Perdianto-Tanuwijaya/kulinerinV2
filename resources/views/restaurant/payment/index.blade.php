@@ -109,7 +109,7 @@
                         <div class="card border-0 shadow-sm mt-4">
                             <div class="card-body border">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="card-title mb-0">Incoming Payment</h5>
+                                    <h5 class="card-title mb-0">Outgoing Payment</h5>
                                 </div>
                                 <hr>
                                 @if (session('success'))
@@ -131,7 +131,7 @@
                                                 <tr>
                                                     <td colspan="5" class="text-muted"
                                                         style="text-align: center; font-style: italic;">
-                                                        No incoming payments found.
+                                                        No outgoing payments found.
                                                     </td>
                                                 </tr>
                                             @else
