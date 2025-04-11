@@ -182,8 +182,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="withdrawAmount" class="form-label">Amount (Rp)</label>
-                            <input type="text" class="form-control" id="withdrawAmount" name="amount" required
-                                min="10000">
+                            <input type="text" class="form-control" id="withdrawAmount" name="amount">
                         </div>
                         <div class="mb-3">
                             <label for="bankName" class="form-label">Bank Name</label>
@@ -218,8 +217,17 @@
                 }
             });
 
-            document.querySelector("form").addEventListener("submit", function() {
-                withdrawAmount.value = withdrawAmount.value.replace(/,/g, ''); // Hapus koma sebelum submit
+            document.querySelector("form").addEventListener("submit", function(event) {
+                // Validasi minimum nilai sebelum submit
+                const rawValue = withdrawAmount.value.replace(/,/g, '');
+                if (rawValue === "" || parseInt(rawValue) < 10000) {
+                    event.preventDefault();
+                    alert("Minimum withdrawal amount is Rp 10,000");
+                    return false;
+                }
+
+                // Jika lolos validasi, hapus koma sebelum submit
+                withdrawAmount.value = withdrawAmount.value.replace(/,/g, '');
             });
         });
 

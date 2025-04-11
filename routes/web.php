@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GuestController;
-use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RatingRestaurantController;
 use App\Http\Controllers\TableRestaurantController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\RedemptionController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\LoyaltyPointController;
 use App\Http\Controllers\AdvertisementController;
-use App\Http\Controllers\PaymentController;
+// use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 
 /*
@@ -70,8 +70,8 @@ Route::middleware(['customer'])->group(function () {
     Route::post('/restaurantMenu/{id}', [MenuRestaurantController::class, 'show'])->name('indexMenu');
 
     Route::post('/detailOrder', [ReservationController::class, 'detailOrder'])->name('detailOrder');
-    Route::post('/generateQris', [MidtransController::class, 'generateQris'])->name('generateQris');
-    Route::post('/checkStatus', [MidtransController::class, 'checkStatus'])->name('checkStatus');
+    Route::post('/generateQris', [PaymentController::class, 'generateQris'])->name('generateQris');
+    Route::post('/checkStatus', [PaymentController::class, 'checkStatus'])->name('checkStatus');
 
     Route::get('/history', [ReservationController::class, 'history'])->name('history');
     Route::post('/history', [ReservationController::class, 'filterDate'])->name('filter');

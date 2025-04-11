@@ -332,24 +332,24 @@ class AuthController extends Controller
     {
         return view('auth.registerRestaurant');
     }
-    public function registerestaurant(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|unique:users',
-            'restaurantName' => 'required',
-            'password' => 'required|alpha_num|min:8|required_with:confirmation_password|same:confirmation_password',
-            'confirmation_password' => 'required',
-        ]);
+    // public function registerestaurant(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email|unique:users',
+    //         'restaurantName' => 'required',
+    //         'password' => 'required|alpha_num|min:8|required_with:confirmation_password|same:confirmation_password',
+    //         'confirmation_password' => 'required',
+    //     ]);
 
-        $restaurant = new User();
-        $restaurant->email = $request->email;
-        // $restaurant->restaurantName = $request->restaurantName;
-        $restaurant->password = bcrypt($request->password);
-        $restaurant->role = 2;
-        $restaurant->save();
+    //     $restaurant = new User();
+    //     $restaurant->email = $request->email;
+    //     // $restaurant->restaurantName = $request->restaurantName;
+    //     $restaurant->password = bcrypt($request->password);
+    //     $restaurant->role = 2;
+    //     $restaurant->save();
 
-        return redirect('/login')->with('success', 'Your account has been created successfully!');
-    }
+    //     return redirect('/login')->with('success', 'Your account has been created successfully!');
+    // }
 
 
 

@@ -40,13 +40,12 @@
                                             <td>{{ $point->id }}</td>
                                             <td>{{ $point->username ?? 'No Username' }}</td>
                                             <td>
-                                                @if ($point->pointLoyalties->isNotEmpty())
-                                                    @foreach ($point->pointLoyalties as $pointLoyalty)
-                                                        {{ number_format($pointLoyalty->point) }}
-                                                    @endforeach
+                                                @if ($point->pointLoyalty)
+                                                    {{ number_format($point->pointLoyalty->point) }}
                                                 @else
                                                     0
                                                 @endif
+
                                             </td>
                                             <td>
                                                 <a href="#" class="btn btn-sm text-white"

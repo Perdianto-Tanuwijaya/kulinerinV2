@@ -16,7 +16,7 @@ class LoyaltyPointController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('role', '1')->with('pointLoyalties')->orderBy('id', 'asc');
+        $query = User::where('role', '1')->with('pointLoyalty')->orderBy('id', 'asc');
 
         if ($request->has('search') && !empty($request->search)) {
             $query->where('username', 'LIKE', '%' . $request->search . '%');

@@ -16,7 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('reservations:auto-cancel')->everyFiveMinutes();
+        $schedule->command('reservation:auto-finish')->everyMinute();
     }
+
 
     /**
      * Register the commands for the application.

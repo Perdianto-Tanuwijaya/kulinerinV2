@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\Receipt;
+// use App\Models\Receipt;
 use App\Models\Reservation;
 use App\Models\Restaurant;
 use App\Models\TableRestaurant;

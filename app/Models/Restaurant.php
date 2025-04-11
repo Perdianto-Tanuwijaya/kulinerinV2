@@ -52,8 +52,8 @@ class Restaurant extends Model
         return $this->hasMany(Payment::class);
     }
 
-    public function restaurantBalances()
+    public function restaurantBalance()
     {
-        return $this->hasMany(RestaurantBalance::class);
+        return $this->hasOne(RestaurantBalance::class);
     }
 }

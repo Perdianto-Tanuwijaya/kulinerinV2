@@ -56,12 +56,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Redemption::class);
     }
-    public function pointLoyalties()
+    public function pointLoyalty()
     {
-        return $this->hasMany(PointLoyalty::class);
+        return $this->hasOne(PointLoyalty::class);
     }
-    public function advertisements()
+    public function advertisement()
     {
-        return $this->hasMany(Advertisement::class);
+        return $this->belongsTo(Advertisement::class);
     }
 }

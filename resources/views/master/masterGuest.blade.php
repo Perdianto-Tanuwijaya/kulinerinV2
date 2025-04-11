@@ -15,20 +15,32 @@
         <a href="{{ route('guestDashboard') }}">
             <img src="{{ asset('asset/kulinerinLogo.png') }}" alt="Kulinerin Logo" class="logo">
         </a>
+
         <div class="search-container">
             <form action="{{ route('search') }}" method="GET">
                 <input type="text" name="keyword" class="search-bar" placeholder="Search Any Restaurant Here"
                     value="{{ request()->query('keyword') }}">
             </form>
-            {{-- <input type="text" class="search-bar" placeholder="Search Any Restaurant Here"> --}}
         </div>
-        <div class="nav-links">
+
+        <!-- Hamburger Button -->
+        <button id="hamburger-btn" class="hamburger">&#9776;</button>
+
+        <!-- Desktop Nav Links -->
+        <div class="nav-links desktop-only">
             <a href="/" class="nav-link">Dashboard</a>
             <a href="{{ route('login') }}" class="nav-link">Login</a>
             <a href="{{ route('register') }}" class="nav-link">Register</a>
         </div>
 
+        <!-- Mobile Dropdown -->
+        <div id="dropdown-menu" class="dropdown hidden">
+            <a href="/" class="dropdown-link">Dashboard</a>
+            <a href="{{ route('login') }}" class="dropdown-link">Login</a>
+            <a href="{{ route('register') }}" class="dropdown-link">Register</a>
+        </div>
     </nav>
+
     @yield('content')
     <footer class="footer">
         <div class="footer-content">
@@ -107,22 +119,6 @@
             <p>© 2025 Kulinerin. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        function toggleDropdown() {
-            const dropdown = document.getElementById('accountDropdown');
-            dropdown.classList.toggle('show');
-
-            // Close dropdown when clicking outside
-            window.onclick = function(event) {
-                if (!event.target.matches('.account-btn')) {
-                    if (dropdown.classList.contains('show')) {
-                        dropdown.classList.remove('show');
-                    }
-                }
-            }
-        }
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -139,6 +135,17 @@
             @if (session('success'))
                 toastr.success("{{ session('success') }}");
             @endif
+        });
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const dropdown = document.getElementById('dropdown-menu');
+        let menuOpen = false;
+
+        hamburgerBtn.addEventListener('click', function() {
+            menuOpen = !menuOpen;
+            dropdown.classList.toggle('hidden');
+
+            // Toggle isi tombol
+            hamburgerBtn.innerHTML = menuOpen ? '&times;' : '&#9776;';
         });
     </script>
 
