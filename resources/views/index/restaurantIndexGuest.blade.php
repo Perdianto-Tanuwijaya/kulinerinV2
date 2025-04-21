@@ -451,41 +451,45 @@
             <section class="section" id="Menu">
                 <h3 class="text-center">{{ $restaurants->restaurantName }} - Menu</h3>
                 <hr>
-                @foreach ($menuItems as $category => $menus)
-                    <p class="mb-2 fs-2 fw-semibold" style="padding-top:1rem">{{ $category }}</p>
-                    <div class="row mb-3 g-4">
-                        @foreach ($menus as $menu)
-                            <div class="col-lg-6 d-flex">
-                                <div class="card d-flex align-items-stretch"
-                                    style="max-height: 150px; border-radius: 20px; width: 100%; background-color: #DECEB0ff; border-color: white; overflow: hidden;">
-                                    <div class="row d-flex g-0">
-                                        <div class="col-4 col-md-4 d-flex align-items-stretch">
-                                            <img src="{{ asset('storage/' . $menu->menuImage) }}"
-                                                class="image_style img-fluid"
-                                                style="width: 100%; height: 100%; max-height: 150px; object-fit: cover; border-radius: 15px;"
-                                                alt="Menu Image">
-                                        </div>
-                                        <div class="col-8 d-flex flex-column justify-content-between"
-                                            style="padding: 10px 15px 10px 10px; flex-grow: 1; min-height: 150px;">
-                                            <h5
-                                                style="margin: 0 5px 5px 0; padding-right: 10px; white-space: normal; word-wrap: break-word;">
-                                                {{ $menu->menuName }}
-                                            </h5>
-                                            <p
-                                                style="margin: 0 5px 5px 0; padding-right: 10px; flex-grow: 1; white-space: normal; word-wrap: break-word;">
-                                                {{ $menu->description }}
-                                            </p>
-                                            <p class="fw-semibold fst-italic"
-                                                style="padding: 5px 10px 5px 0; margin-bottom: 5px; min-height: 20px; display: block;">
-                                                {{ number_format($menu->menuPrice, 0, '.', ',') }}
-                                            </p>
+                @if ($menuItems->isEmpty())
+                    <p class="text-muted text-center">There's no menu</p>
+                @else
+                    @foreach ($menuItems as $category => $menus)
+                        <p class="mb-2 fs-2 fw-semibold" style="padding-top:1rem">{{ $category }}</p>
+                        <div class="row mb-3 g-4">
+                            @foreach ($menus as $menu)
+                                <div class="col-lg-6 d-flex">
+                                    <div class="card d-flex align-items-stretch"
+                                        style="max-height: 150px; border-radius: 20px; width: 100%; background-color: #DECEB0ff; border-color: white; overflow: hidden;">
+                                        <div class="row d-flex g-0">
+                                            <div class="col-4 col-md-4 d-flex align-items-stretch">
+                                                <img src="{{ asset('storage/' . $menu->menuImage) }}"
+                                                    class="image_style img-fluid"
+                                                    style="width: 100%; height: 100%; max-height: 150px; object-fit: cover; border-radius: 15px;"
+                                                    alt="Menu Image">
+                                            </div>
+                                            <div class="col-8 d-flex flex-column justify-content-between"
+                                                style="padding: 10px 15px 10px 10px; flex-grow: 1; min-height: 150px;">
+                                                <h5
+                                                    style="margin: 0 5px 5px 0; padding-right: 10px; white-space: normal; word-wrap: break-word;">
+                                                    {{ $menu->menuName }}
+                                                </h5>
+                                                <p
+                                                    style="margin: 0 5px 5px 0; padding-right: 10px; flex-grow: 1; white-space: normal; word-wrap: break-word;">
+                                                    {{ $menu->description }}
+                                                </p>
+                                                <p class="fw-semibold fst-italic"
+                                                    style="padding: 5px 10px 5px 0; margin-bottom: 5px; min-height: 20px; display: block;">
+                                                    {{ number_format($menu->menuPrice, 0, '.', ',') }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endforeach
+                            @endforeach
+                        </div>
+                    @endforeach
+                @endif
             </section>
 
         </div>
@@ -678,10 +682,18 @@
                             return response.json();
                         })
                         .then(data => {
-                            availableTablesSpan.innerHTML =
-                                `<strong><em>*Available Tables :</em></strong> <strong><em>${data.availableTables}</em></strong>`;
-                            reserveButton.disabled = false; // Aktifkan tombol jika ada meja tersedia
+                            const available = parseInt(data.availableTables);
+
+                            if (available === 0) {
+                                availableTablesSpan.innerHTML = `<strong><em>*No available table</em></strong>`;
+                            } else {
+                                availableTablesSpan.innerHTML =
+                                    `<strong><em>*Available Tables :</em></strong> <strong><em>${available}</em></strong>`;
+                            }
+
+                            reserveButton.disabled = available === 0;
                         })
+
                         .catch(error => {
                             console.error('Error checking available tables:', error);
                             availableTablesSpan.textContent = "Error checking available tables!";

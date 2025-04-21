@@ -272,12 +272,6 @@ class PaymentController extends Controller
                 // Tambahkan kembali jumlah yang ditarik ke saldo restoran
                 $balance->restaurantBalance += $payment->amount;
                 $balance->save();
-            } else {
-                // Jika saldo belum ada, buat record baru
-                RestaurantBalance::create([
-                    'restaurant_id' => $restaurant->id,
-                    'restaurantBalance' => $payment->amount
-                ]);
             }
         }
 

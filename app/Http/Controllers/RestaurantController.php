@@ -169,16 +169,16 @@ class RestaurantController extends Controller
             'reviews' => $restaurant->ratingRestaurants,
         ];
     }
-    public function indexMenu($id)
-    {
-        $menuItems = MenuRestaurant::where('restaurant_id', $id)
-            ->orderBy('category')
-            ->get()
-            ->groupBy('category');
-        $restaurants = Restaurant::find($id);
+    // public function indexMenu($id)
+    // {
+    //     $menuItems = MenuRestaurant::where('restaurant_id', $id)
+    //         ->orderBy('category')
+    //         ->get()
+    //         ->groupBy('category');
+    //     $restaurants = Restaurant::find($id);
 
-        return view('menu.index', compact('menuItems', 'restaurants'));
-    }
+    //     return view('menu.index', compact('menuItems', 'restaurants'));
+    // }
 
     public function settings()
     {

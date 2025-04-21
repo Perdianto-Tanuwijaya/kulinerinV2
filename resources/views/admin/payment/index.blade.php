@@ -141,6 +141,7 @@
                         })
                     })
                     .then(response => response.json())
+                    //message setelah approve atau reject
                     .then(data => {
                         Swal.fire("Success!", `Withdraw has been ${status.toLowerCase()}!`, "success")
                             .then(() => location.reload());

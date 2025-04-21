@@ -80,7 +80,7 @@ Route::middleware(['customer'])->group(function () {
     Route::post('/rating/store', [RatingRestaurantController::class, 'store'])->name('rating.store');
 
     //REWARD
-    Route::get('/rewards', [RewardController::class, 'show'])->name('rewards.show');
+    Route::get('/rewards', [RedemptionController::class, 'show'])->name('rewards.show');
     Route::post('/rewards/{id}/redeem', [RedemptionController::class, 'redeem'])->name('rewards.redeem');
     Route::get('/redemptions/{redemption}/success', [RedemptionController::class, 'success'])->name('rewards.redemption.success');
     Route::get('/redemptions/history', [RedemptionController::class, 'history'])->name('rewards.redemption.history');
