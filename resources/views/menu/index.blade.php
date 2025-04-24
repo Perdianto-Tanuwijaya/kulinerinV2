@@ -150,7 +150,7 @@
         function detailOrder() {
             const guestInfo = "{{ $guestInfo }}";
             const bookDate = "{{ $reservationDate }}";
-            console.log(bookDate);
+            // console.log(bookDate);
 
             const reservationDate = new Date(bookDate).toLocaleDateString('en-GB', {
                 day: 'numeric',
@@ -184,6 +184,8 @@
                     grandTotal += priceTotal;
                 }
             });
+
+            localStorage.setItem('orderData', JSON.stringify(orderData));
 
             // Validasi: Jika tidak ada menu yang dipilih, tampilkan alert dan hentikan proses
             if (orderData.length === 0) {
@@ -245,14 +247,114 @@
         }
 
 
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     document.querySelectorAll(".quantity-container").forEach(container => {
+        //         const initialPlusBtn = container.querySelector(".plus-initial");
+        //         const quantitySelector = container.querySelector(".quantity-selector");
+        //         const minusBtn = container.querySelector(".minus-btn");
+        //         const plusBtn = container.querySelector(".plus-btn");
+        //         const quantityInput = container.querySelector(".quantity-value");
+        //         let count = 0;
+
+        //         // Show quantity selector when "+" is clicked
+        //         initialPlusBtn.addEventListener("click", function() {
+        //             initialPlusBtn.classList.add("d-none");
+        //             quantitySelector.classList.remove("d-none");
+        //             count++;
+        //             quantityInput.value = count;
+        //         });
+
+        //         // Increase quantity
+        //         plusBtn.addEventListener("click", function() {
+        //             count++;
+        //             quantityInput.value = count;
+        //         });
+
+        //         // Decrease quantity, hide if count goes back to 1
+        //         minusBtn.addEventListener("click", function() {
+        //             if (count > 1) {
+        //                 count--;
+        //                 quantityInput.value = count;
+        //             } else {
+        //                 quantitySelector.classList.add("d-none");
+        //                 initialPlusBtn.classList.remove("d-none");
+        //                 count = 0; // Reset to 1 when hidden
+        //                 quantityInput.value = count;
+        //             }
+        //         });
+        //     });
+        // });
+
         document.addEventListener("DOMContentLoaded", function() {
+            // Cek apakah pengguna kembali menggunakan tombol back
+            const backPressed = localStorage.getItem('backPressed') === 'true';
+
+            // Jika pengguna kembali dengan tombol back, pulihkan kuantitas
+            if (backPressed) {
+                // Hapus tanda setelah digunakan
+                localStorage.removeItem('backPressed');
+
+                // Ambil data order dari localStorage yang tersimpan saat Go to Cart
+                const orderData = JSON.parse(localStorage.getItem('orderData')) || [];
+
+                // Buat mapping menuName ke quantity
+                const menuQuantities = {};
+                orderData.forEach(item => {
+                    menuQuantities[item.menuName] = item.qty;
+                });
+
+                // Terapkan kuantitas ke masing-masing menu
+                document.querySelectorAll('.card').forEach(card => {
+                    const menuName = card.querySelector('#menuName').textContent.trim();
+                    const quantityContainer = card.querySelector('.quantity-container');
+
+                    if (quantityContainer && menuQuantities[menuName]) {
+                        const initialPlusBtn = quantityContainer.querySelector('.plus-initial');
+                        const quantitySelector = quantityContainer.querySelector('.quantity-selector');
+                        const quantityInput = quantityContainer.querySelector('.quantity-value');
+
+                        // Tampilkan selector dan atur nilai
+                        initialPlusBtn.classList.add('d-none');
+                        quantitySelector.classList.remove('d-none');
+                        quantityInput.value = menuQuantities[menuName];
+
+                        // Update variabel count pada handler
+                        const container = quantityContainer;
+                        const minusBtn = container.querySelector(".minus-btn");
+                        const plusBtn = container.querySelector(".plus-btn");
+                        let count = menuQuantities[menuName];
+
+                        // Rebind event untuk plus/minus
+                        plusBtn.onclick = function() {
+                            count++;
+                            quantityInput.value = count;
+                        };
+
+                        minusBtn.onclick = function() {
+                            if (count > 1) {
+                                count--;
+                                quantityInput.value = count;
+                            } else {
+                                quantitySelector.classList.add("d-none");
+                                initialPlusBtn.classList.remove("d-none");
+                                count = 0;
+                                quantityInput.value = count;
+                            }
+                        };
+                    }
+                });
+            }
+
+            // Kode event listener asli untuk penambahan/pengurangan tetap ada
             document.querySelectorAll(".quantity-container").forEach(container => {
                 const initialPlusBtn = container.querySelector(".plus-initial");
                 const quantitySelector = container.querySelector(".quantity-selector");
                 const minusBtn = container.querySelector(".minus-btn");
                 const plusBtn = container.querySelector(".plus-btn");
                 const quantityInput = container.querySelector(".quantity-value");
-                let count = 0;
+
+                // Hanya inisialisasi count jika belum ada nilai sebelumnya
+                let count = parseInt(quantityInput.value) || 0;
 
                 // Show quantity selector when "+" is clicked
                 initialPlusBtn.addEventListener("click", function() {
@@ -276,7 +378,7 @@
                     } else {
                         quantitySelector.classList.add("d-none");
                         initialPlusBtn.classList.remove("d-none");
-                        count = 0; // Reset to 1 when hidden
+                        count = 0; // Reset to 0 when hidden
                         quantityInput.value = count;
                     }
                 });

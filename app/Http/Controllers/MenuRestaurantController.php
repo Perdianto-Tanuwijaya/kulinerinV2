@@ -52,7 +52,7 @@ class MenuRestaurantController extends Controller
                 'menuName' => 'required|string|max:255',
                 'category' => 'required|in:Appetizer,Main Course,Dessert,Beverages',
                 'menuPrice' => 'required|numeric',
-                'menuImage' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'menuImage' => 'required|image|mimes:jpeg,png,jpg|max:5120',
                 // 'isAvailable' => 'required|in:YES,NO',
                 'description' => 'required|string',
             ],[
@@ -152,7 +152,7 @@ class MenuRestaurantController extends Controller
             'menuName' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'menuPrice' => 'required|numeric',
-            'menuImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'menuImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'isAVailable' => 'required|in:YES,NO',
             'description' => 'required|string',
         ],[

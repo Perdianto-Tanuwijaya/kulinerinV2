@@ -122,7 +122,7 @@
                     });
                 },
                 error: function(xhr, status, error) {
-                    let errorMessage = "Terjadi kesalahan.";
+                    let errorMessage = "Something went wrong.";
 
                     if (xhr.status === 422) {
                         let errors = JSON.parse(xhr.responseText).errors;

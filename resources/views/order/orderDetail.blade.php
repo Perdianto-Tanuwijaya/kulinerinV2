@@ -283,7 +283,20 @@
     </div>
 </body>
 <script>
+    // function saveMenuQuantities() {
+    //     const quantities = {};
+    //     document.querySelectorAll('.quantity-value').forEach(input => {
+    //         if (input.value && parseInt(input.value) > 0) {
+    //             const menuId = input.id.split('_')[0];
+    //             quantities[menuId] = parseInt(input.value);
+    //         }
+    //     });
+    //     localStorage.setItem('menuQuantities', JSON.stringify(quantities));
+    // }
+
     function goBack() {
+        localStorage.setItem('backPressed', 'true');
+
         if (window.history.length > 1) {
             window.history.back();
         } else {
