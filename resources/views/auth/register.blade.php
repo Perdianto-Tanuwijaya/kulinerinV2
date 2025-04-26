@@ -47,10 +47,6 @@
                 <button type="button" class="google-button" id="restaurantRegister">Register as Restaurant</button>
             </form>
 
-            <div class="signup-link">
-                <p>Already have an account? <a href="/login">Login</a></p>
-            </div>
-
             <script>
                 document.getElementById("restaurantRegister").addEventListener("click", function() {
                     document.getElementById("register_as_restaurant").value = "1"; // Mark as restaurant registration
