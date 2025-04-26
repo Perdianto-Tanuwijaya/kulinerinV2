@@ -370,6 +370,13 @@
     }
 
     document.querySelectorAll(".schedule-row").forEach(addTimeValidation);
+    document.querySelectorAll(".remove-schedule").forEach(button => {
+    button.addEventListener("click", function() {
+        button.parentElement.remove();
+        updateDaySelection();
+    });
+});
+
 </script>
 
 <script>
