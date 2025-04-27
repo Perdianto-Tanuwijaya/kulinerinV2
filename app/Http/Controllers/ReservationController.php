@@ -312,7 +312,7 @@ class ReservationController extends Controller
         $restaurant = Restaurant::where('user_id', Auth::user()->id)->first();
 
         // Ambil reservasi yang hanya dimiliki oleh restoran tersebut
-        $reservations = Reservation::where('restaurant_id', $restaurant->id)->get();
+        $reservations = Reservation::where('restaurant_id', $restaurant->id)->orderBy('created_at', 'desc')->get();
 
         // Kirim data ke view
         return view('restaurant.order.index', compact('reservations'));

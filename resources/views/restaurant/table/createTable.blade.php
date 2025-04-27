@@ -19,7 +19,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    id="closeModalBtn">Close</button>
                 <button type="button" class="btn btn-primary" id="saveTable">Save</button>
             </div>
         </div>
@@ -31,6 +32,13 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    $(document).ready(function() {
+        $('#closeModalBtn').on('click', function() {
+            setTimeout(function() {
+                location.reload();
+            }, 300);
+        });
+    });
     $(document).ready(function() {
         $('#saveTable').on('click', function() {
             var formData = new FormData();

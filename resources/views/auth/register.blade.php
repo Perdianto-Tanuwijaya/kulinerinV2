@@ -26,10 +26,12 @@
             <form action="{{ url('register') }}" method="POST">
                 @csrf
                 <div class="input-group">
-                    <input type="text" name="username" id="username" placeholder="Username" value="{{ old('username') }}" required>
+                    <input type="text" name="username" id="username" placeholder="Username"
+                        value="{{ old('username') }}" required>
                 </div>
                 <div class="input-group">
-                    <input type="email" name="email" id="email" placeholder="Email" value="{{ old('email') }}" required>
+                    <input type="email" name="email" id="email" placeholder="Email" value="{{ old('email') }}"
+                        required>
                 </div>
 
                 <div class="input-group">
@@ -37,7 +39,8 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="password" name="confirmation_password" id="confirmation_password" placeholder="Confirm Password" required>
+                    <input type="password" name="confirmation_password" id="confirmation_password"
+                        placeholder="Confirm Password" required>
                 </div>
 
                 <!-- Hidden input to indicate user type -->
@@ -46,6 +49,10 @@
                 <button type="submit" class="login-button">Register</button>
                 <button type="button" class="google-button" id="restaurantRegister">Register as Restaurant</button>
             </form>
+
+            <div class="signup-link">
+                <p>Already have an account? <a href="/login">Log In</a></p>
+            </div>
 
             <script>
                 document.getElementById("restaurantRegister").addEventListener("click", function() {

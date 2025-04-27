@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c41626369ee16680cae202f8d7ab7be8",
+    "content-hash": "e6f134b7a36c49f6b1911afcf9ece36d",
     "packages": [
         {
             "name": "brick/math",
@@ -6190,6 +6190,65 @@
             "time": "2024-12-21T16:25:41+00:00"
         },
         {
+            "name": "tintnaingwin/email-checker",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tintnaingwinn/email-checker.git",
+                "reference": "7ab7706568696f0faf4b9e7f7dd957e603a0636e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tintnaingwinn/email-checker/zipball/7ab7706568696f0faf4b9e7f7dd957e603a0636e",
+                "reference": "7ab7706568696f0faf4b9e7f7dd957e603a0636e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0|~5.0|~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "EmailChecker": "Tintnaingwin\\EmailChecker\\Facades\\EmailChecker"
+                    },
+                    "providers": [
+                        "Tintnaingwin\\EmailChecker\\EmailCheckerServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tintnaingwin\\EmailChecker\\": "src/"
+                },
+                "classmap": [
+                    "tests/EmailCheckerTest.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tint Naing Win",
+                    "email": "amigo.k8@gmail.com"
+                }
+            ],
+            "description": "Laravel Package To Validate If An Email Address Exists Without Sending An Email",
+            "support": {
+                "issues": "https://github.com/tintnaingwinn/email-checker/issues",
+                "source": "https://github.com/tintnaingwinn/email-checker/tree/master"
+            },
+            "time": "2018-04-18T07:43:09+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v5.6.1",
             "source": {
@@ -8955,12 +9014,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.0.2"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

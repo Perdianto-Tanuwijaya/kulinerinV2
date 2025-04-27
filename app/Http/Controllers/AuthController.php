@@ -14,6 +14,7 @@ use Flasher\Toastr\Prime\ToastrInterface;
 use Laravel\Socialite\Facades\Socialite;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 // use App\Models\Restaurant;
 
 class AuthController extends Controller
@@ -71,11 +72,20 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users|email_checker',
             'username' => 'unique:users',
             'password' => 'required|alpha_num|min:8|required_with:confirmation_password|same:confirmation_password',
             'confirmation_password' => 'required',
         ]);
+
+        $rules = [
+            'email' => 'required|email',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect('/register')->withErrors($validator)->withInput();
+        }
 
         $role = 1;
 

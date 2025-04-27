@@ -26,6 +26,12 @@
                         <input type="text" class="form-control" id="menuPrice" name="menuPrice" required
                             oninput="formatPrice(this)">
                     </div>
+                    {{-- <div class="mb-3">
+                        <label for="menuPrice" class="form-label">Menu Price</label>
+                        <input type="text" class="form-control" id="menuPrice" name="menuPrice" required
+                            oninput="validatePrice(this)">
+                        <div id="priceError" style="color: red; display: none;">Price cannot be 0</div>
+                    </div> --}}
                     <div class="mb-3">
                         <label for="menuImage" class="form-label">Menu Image</label>
                         <input class="form-control" name="menuImage" id="image" type="file"
@@ -48,7 +54,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="closeModalBtn"
+                    data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="saveMenu">Save</button>
             </div>
         </div>
@@ -85,6 +92,31 @@
         input.value = new Intl.NumberFormat('en-US').format(value);
     }
 
+    // function validatePrice(input) {
+    //     const errorDiv = document.getElementById('priceError');
+    //     const value = input.value.replace(/[^0-9]/g, '');
+    //     const saveBtn = document.getElementById('saveMenu');
+
+    //     if (value === "" || parseInt(value) === 0) {
+    //         errorDiv.style.display = 'block';
+    //         input.setCustomValidity("Price cannot be 0");
+    //         saveBtn.disabled = true;
+    //     } else {
+    //         errorDiv.style.display = 'none';
+    //         input.setCustomValidity("");
+    //         saveBtn.disabled = false;
+    //     }
+
+    //     formatPrice(input);
+    // }
+
+    $(document).ready(function() {
+        $('#closeModalBtn').on('click', function() {
+            setTimeout(function() {
+                location.reload();
+            }, 300);
+        });
+    });
 
     $(document).ready(function() {
         $('#saveMenu').on('click', function() {
