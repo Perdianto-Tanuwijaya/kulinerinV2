@@ -63,7 +63,10 @@ class ValidEmailWithSMTP implements Rule
             $this->message = 'The email domain does not have valid MX records.';
             return false;
         }
-
+        \Log::info('Cek Host', [
+            'host' => $mx_records[0],
+            'port' => 25,
+        ]);
         // Connect to the first MX server
         $smtp_conn = @fsockopen($mx_records[0], 25, $errno, $errstr, 5);
         if (!$smtp_conn) {

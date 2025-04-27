@@ -26,43 +26,44 @@ class AuthController extends Controller
     }
 
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
-
-        // dd($googleUser);
-        if (!$googleUser || !$googleUser->email) {
-            return redirect()->route('login')->withErrors('Failed to retrieve Google account information.');
+        // Debug incoming request
+        if (!$request->has('code')) {
+            return redirect()->route('login')->withErrors('Google authentication failed: No authorization code received');
         }
 
-        $user = User::where('email', $googleUser->email)->first();
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
-        if (!$user) {
-            // Get first and last name from Google user
-            $nameParts = explode(' ', $googleUser->name);
-            $firstName = $nameParts[0] ?? '';
-            $lastName = isset($nameParts[1]) ? implode(' ', array_slice($nameParts, 1)) : '';
-            $username = $firstName . ' ' . $lastName;
-            // dd($googleUser->name);
-            $user = User::create([
-                'email' => $googleUser->email,
-                'username' => $googleUser->name,
-                'role' => 1,
-                'password' => Hash::make(rand(100000, 999999)),
-            ]);
-            // dd($user);
-            $user->save();
-            // $user = new User();
-            // $user->email = $googleUser->email;
-            // $user->username = $googleUser->$username;
-            // $user->password = Hash::make(rand(100000, 999999));
-            // $user->role = 1;
-            // $user->save();
+            if (!$googleUser || !$googleUser->email) {
+                return redirect()->route('login')->withErrors('Failed to retrieve Google account information.');
+            }
+
+            $user = User::where('email', $googleUser->email)->first();
+
+            if (!$user) {
+                // Get first and last name from Google user
+                $nameParts = explode(' ', $googleUser->name);
+                $firstName = $nameParts[0] ?? '';
+                $lastName = isset($nameParts[1]) ? implode(' ', array_slice($nameParts, 1)) : '';
+
+                $user = User::create([
+                    'email' => $googleUser->email,
+                    'username' => $googleUser->name,
+                    'role' => 1,
+                    'password' => Hash::make(rand(100000, 999999)),
+                ]);
+            }
+
+            Auth::login($user);
+            return redirect()->route('customerDashboard')->withSuccess('Login Success');
+
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Google OAuth error: ' . $e->getMessage());
+            return redirect()->route('login')->withErrors('Failed to authenticate with Google: ' . $e->getMessage());
         }
-
-        Auth::login($user);
-
-        return redirect()->route('customerDashboard')->withSuccess('Login Success');
     }
 
     public function showRegisterForm()
