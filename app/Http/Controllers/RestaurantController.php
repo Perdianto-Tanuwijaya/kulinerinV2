@@ -26,7 +26,8 @@ class RestaurantController extends Controller
     {
         $search = $request->query('keyword');
         $location = $request->query('location');
-        $minRating = $request->query('min_rating');
+        $minRating = $request->input('min_rating');
+        $filterDays = $request->input('opening_day', []);
         $restaurants = Restaurant::query();
 
         if ($search) {
@@ -53,7 +54,25 @@ class RestaurantController extends Controller
         }
 
 
-        $restaurants = $restaurants->paginate(5);
+        // Filter hari buka
+        if (!empty($filterDays)) {
+            $restaurants = $restaurants->whereHas('operationalHours', function ($query) use ($filterDays) {
+                $query->whereIn('day', $filterDays)
+                    ->whereNotNull('open_time')
+                    ->whereNotNull('close_time');
+            }, '=', count($filterDays)); // Pastikan restoran buka di semua hari yang dipilih
+        }
+
+        // Ambil restoran beserta operational_hours (kalau mau tampilkan jamnya juga)
+        $restaurants = $restaurants->with(['operationalHours' => function ($query) use ($filterDays) {
+            if (!empty($filterDays)) {
+                $query->whereIn('day', $filterDays)
+                    ->whereNotNull('open_time')
+                    ->whereNotNull('close_time');
+            }
+        }])->paginate(5);
+
+        // Proses transformasi hasil
         $restaurants->getCollection()->transform(function ($restaurant) use ($minRating) {
             $ratingData = $this->getRating($restaurant->id); // call rating function
             $restaurant->restaurantImage = strtok($restaurant->restaurantImage, ',');
@@ -63,16 +82,25 @@ class RestaurantController extends Controller
             return $restaurant;
         });
 
+        // Filter berdasarkan minimal rating
+        // if ($minRating) {
+        //     $restaurants->setCollection($restaurants->getCollection()->filter(function ($restaurant) use ($minRating) {
+        //         $minRange = $minRating;
+        //         $maxRange = $minRating + 0.99; // Range rating 4.0 - 4.99 misal
+        //         return $restaurant->averageScore >= $minRange && $restaurant->averageScore < $maxRange;
+        //     }));
+        // }
         if ($minRating) {
             $restaurants->setCollection($restaurants->getCollection()->filter(function ($restaurant) use ($minRating) {
-                // Calculate the minimum and maximum based on the selected rating
-                $minRange = $minRating;
-                $maxRange = $minRating + 0.99; // The upper bound is one less than the next whole number
+                // Tentukan minimum dan maksimum rating berdasarkan pilihan pengguna
+                $minRange = $minRating;  // minRating (dari input pengguna)
+                $maxRange = 5;  // Batas atas selalu 5 karena rating tertinggi adalah 5
 
-                // Filter restaurants based on the dynamic range
-                return $restaurant->averageScore >= $minRange && $restaurant->averageScore < $maxRange;
+                // Filter restoran berdasarkan rentang rating yang dipilih
+                return $restaurant->averageScore >= $minRange && $restaurant->averageScore <= $maxRange;
             }));
         }
+
 
         return view('index.restaurantSearchIndex', compact('restaurants'));
     }

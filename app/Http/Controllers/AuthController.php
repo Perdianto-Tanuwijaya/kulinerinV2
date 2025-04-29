@@ -75,6 +75,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'unique:users', new ValidEmailWithSMTP],
+            // 'email' => 'required|email|unique:users', // No validation for valid mail
             'username' => 'unique:users',
             'password' => 'required|alpha_num|min:8|required_with:confirmation_password|same:confirmation_password',
             'confirmation_password' => 'required',
