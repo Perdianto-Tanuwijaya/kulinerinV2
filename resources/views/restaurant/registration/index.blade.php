@@ -202,12 +202,12 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener('submit', function (e) {
         let imageCount = 0;
 
-        // Count new images
+        
         document.querySelectorAll('.image-input').forEach(input => {
             if (input.files.length > 0) imageCount++;
         });
 
-        // Count existing images
+        
         document.querySelectorAll('input[name^="existing_images"]').forEach(input => {
             if (input.value && input.value !== 'null') imageCount++;
         });
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const scheduleCount = document.querySelectorAll('.schedule-row').length;
 
         if (scheduleCount === 0 || imageCount < 3) {
-            e.preventDefault(); // Block submission
+            e.preventDefault(); 
 
             if (scheduleCount === 0) {
                 toastr.error('Please add at least one operating schedule.');
