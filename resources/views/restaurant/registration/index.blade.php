@@ -193,6 +193,43 @@
     }
 </script>
 
+@include('toastr.message')
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('create_restaurant_form');
+
+    form.addEventListener('submit', function (e) {
+        let imageCount = 0;
+
+        
+        document.querySelectorAll('.image-input').forEach(input => {
+            if (input.files.length > 0) imageCount++;
+        });
+
+        
+        document.querySelectorAll('input[name^="existing_images"]').forEach(input => {
+            if (input.value && input.value !== 'null') imageCount++;
+        });
+
+        const scheduleCount = document.querySelectorAll('.schedule-row').length;
+
+        if (scheduleCount === 0 || imageCount < 3) {
+            e.preventDefault(); 
+
+            if (scheduleCount === 0) {
+                toastr.error('Please add at least one operating schedule.');
+            }
+
+            if (imageCount < 3) {
+                toastr.error('Please upload at least 3 images.');
+            }
+        }
+    });
+});
+</script>
+
+
 <style>
     #createRestaurant {
         width: 100%;
