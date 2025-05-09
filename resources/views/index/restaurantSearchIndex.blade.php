@@ -102,39 +102,69 @@
 
             <!-- Overlay Filter Section -->
             <div class="filter-overlay" id="filterOverlay">
-                <div class="filter-content">
+                <div class="filter-content" style="background-color: #F0D4A3">
                     <button class="close-filter" id="closeFilter">×</button>
-                    <h5 class="mb-3">Filter Restaurants</h5>
+                    {{-- <h5 class="mb-3">Filter Restaurants</h5> --}}
                     <form action="{{ route('searchRestaurant') }}" method="GET">
                         <input type="hidden" name="keyword" value="{{ request('keyword') }}">
                         <input type="hidden" name="location" value="{{ request('location') }}">
                         {{-- <div class="filter-section"> --}}
-                        {{-- <h3 class="filter-title">Rating</h3> --}}
+                        <h3 class="filter-title">Rating</h3>
+                        @php
+                            $stars = [
+                                1 => '★☆☆☆☆',
+                                2 => '★★☆☆☆',
+                                3 => '★★★☆☆',
+                                4 => '★★★★☆',
+                                5 => '★★★★★',
+                            ];
+                        @endphp
                         <div class="rating-options">
-                            <label class="rating-option">
-                                <input type="radio" name="min_rating" value="5"
-                                    {{ request('min_rating') == 5 ? 'checked' : '' }}>
-                                <span class="stars">★★★★★</span>
+                            @foreach ($stars as $value => $star)
+                                <label class="rating-option">
+                                    <input type="radio" name="min_rating" value="{{ $value }}"
+                                        {{ request('min_rating') == $value ? 'checked' : '' }}>
+                                    <span class="stars">{{ $star }} ({{ $value }}
+                                        Star{{ $value > 1 ? 's' : '' }} {{ $value == 5 ? 'Only' : '& Above' }})</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        <h3 class="filter-title" style="margin-top: 20px">Opening Day</h3>
+                        <div class="rating-options">
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Monday"
+                                    {{ is_array(request('opening_day')) && in_array('Monday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Monday</span>
                             </label>
-                            <label class="rating-option">
-                                <input type="radio" name="min_rating" value="4"
-                                    {{ request('min_rating') == 4 ? 'checked' : '' }}>
-                                <span class="stars">★★★★☆</span>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Tuesday"
+                                    {{ is_array(request('opening_day')) && in_array('Tuesday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Tuesday</span>
                             </label>
-                            <label class="rating-option">
-                                <input type="radio" name="min_rating" value="3"
-                                    {{ request('min_rating') == 3 ? 'checked' : '' }}>
-                                <span class="stars">★★★☆☆</span>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Wednesday"
+                                    {{ is_array(request('opening_day')) && in_array('Wednesday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Wednesday</span>
                             </label>
-                            <label class="rating-option">
-                                <input type="radio" name="min_rating" value="2"
-                                    {{ request('min_rating') == 2 ? 'checked' : '' }}>
-                                <span class="stars">★★☆☆☆</span>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Thursday"
+                                    {{ is_array(request('opening_day')) && in_array('Thursday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Thursday</span>
                             </label>
-                            <label class="rating-option">
-                                <input type="radio" name="min_rating" value="1"
-                                    {{ request('min_rating') == 1 ? 'checked' : '' }}>
-                                <span class="stars">★☆☆☆☆</span>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Friday"
+                                    {{ is_array(request('opening_day')) && in_array('Friday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Friday</span>
+                            </label>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Saturday"
+                                    {{ is_array(request('opening_day')) && in_array('Saturday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Saturday</span>
+                            </label>
+                            <label class="day-option">
+                                <input type="checkbox" name="opening_day[]" value="Sunday"
+                                    {{ is_array(request('opening_day')) && in_array('Sunday', request('opening_day')) ? 'checked' : '' }}>
+                                <span class="day-name">Sunday</span>
                             </label>
                         </div>
                         {{-- </div> --}}

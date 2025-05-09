@@ -20,19 +20,22 @@
         <li class="nav-item">
             <a href="{{ route('reward.index') }}"
                 class="nav-link {{ Request::routeIs('reward.index') ? 'active' : '' }}">
-                <i class="bi bi-list"></i>
+                <i class="bi bi-gift"></i>
+                {{-- <i class="bi bi-list"></i> --}}
                 <span class="nav-text">Reward</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ route('point.index') }}" class="nav-link {{ Request::routeIs('point.index') ? 'active' : '' }}">
-                <i class="bi bi-table"></i>
+                <i class="bi bi-database-up"></i>
+                {{-- <i class="bi bi-table"></i> --}}
                 <span class="nav-text">Point</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ route('ad.index') }}" class="nav-link {{ Request::routeIs('ad.index') ? 'active' : '' }}">
-                <i class="bi bi-cart"></i>
+                <i class="bi bi-badge-ad-fill"></i>
+                {{-- <i class="bi bi-cart"></i> --}}
                 <span class="nav-text">Advertisement</span>
             </a>
         </li>
